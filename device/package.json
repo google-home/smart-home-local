@@ -1,0 +1,21 @@
+{
+  "name": "fakecandy",
+  "version": "0.0.1",
+  "description": "fakecandy is a fake openpixelcontrol server that prints led state on standard output.",
+  "main": "server.js",
+  "scripts": {
+    "lint": "standard",
+    "start": "node server.js"
+  },
+  "author": "Google",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "cbor": "^4.1.5",
+    "chalk": "^2.4.2",
+    "opc": "^1.1.3",
+    "yargs": "^13.2.4"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
+}

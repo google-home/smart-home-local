@@ -26,13 +26,13 @@ export interface IBrightnessAbsolute {
   brightness: number;
 }
 
-type ICommandState = IOnOff | IColorAbsolute | IBrightnessAbsolute;
+export type ILightCommand = IOnOff | IColorAbsolute | IBrightnessAbsolute;
 
 interface IDeviceState {
   online: boolean;
 }
 
-export type ILightState = ICommandState & IDeviceState;
+export type ILightState = ILightCommand & IDeviceState;
 
 export interface IFakecandyData {
   id: string;

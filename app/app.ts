@@ -13,14 +13,10 @@
 
 /// <reference types="@google/local-home-sdk" />
 
-import * as cbor from "cbor";
-import { IBrightnessAbsolute, IColorAbsolute, IFakecandyData, ILightState, IOnOff} from "./types";
-import App = smarthome.App;
-import Constants = smarthome.Constants;
-import DataFlow = smarthome.DataFlow;
-import IntentFlow = smarthome.IntentFlow;
-import Intents = smarthome.Intents;
-import ExecuteResponseBuilder = smarthome.Execute.Response.Builder;
+import { decodeFirst as cborDecodeFirst } from "cbor";
+import { IBrightnessAbsolute, IColorAbsolute, IOnOff,
+         ILightCommand, ILightState,
+         IFakecandyData } from "./types";
 
 // TODO(proppy): add typings
 const opcStream = require("opc");
@@ -35,8 +31,8 @@ export class HomeApp {
   }
 
   // identifyHandlers decode UDP scan data and structured device information.
-  public identifyHandler = (identifyRequest: IntentFlow.IdentifyRequest):
-    Promise<IntentFlow.IdentifyResponse> => {
+  public identifyHandler = (identifyRequest: smarthome.IntentFlow.IdentifyRequest):
+    Promise<smarthome.IntentFlow.IdentifyResponse> => {
     console.log("IDENTIFY request", identifyRequest);
     // TODO(proppy): handle multiple inputs.
     const device = identifyRequest.inputs[0].payload.device;
@@ -48,14 +44,14 @@ export class HomeApp {
     console.debug("udpScanData:", udpScanData);
     return new Promise((resolve, reject) => {
       // Device encoded discovery payload in CBOR.
-      cbor.decodeFirst(udpScanData, (error: Error, discoveryData: IFakecandyData) => {
+      cborDecodeFirst(udpScanData, (error: Error, discoveryData: IFakecandyData) => {
         if (error != null) {
           return reject(error);
         }
         console.debug("discoveryData:", discoveryData);
         this.ledCount = discoveryData.leds;
         const identifyResponse = {
-          intent: Intents.IDENTIFY,
+          intent: smarthome.Intents.IDENTIFY,
           requestId: identifyRequest.requestId,
           payload: {
             device: {
@@ -67,7 +63,7 @@ export class HomeApp {
                 hwVersion: discoveryData.hw_rev,
                 swVersion: discoveryData.fw_rev,
               },
-              indicationMode: IntentFlow.IndicationMode.BLINK,
+              indicationMode: smarthome.IntentFlow.IndicationMode.BLINK,
               verificationId: discoveryData.id,
             },
           },
@@ -79,8 +75,8 @@ export class HomeApp {
   }
 
   // executeHandler send openpixelcontrol messages corresponding to light device commands.
-  public executeHandler = (executeRequest: IntentFlow.ExecuteRequest):
-    Promise<IntentFlow.ExecuteResponse> => {
+  public executeHandler = (executeRequest: smarthome.IntentFlow.ExecuteRequest):
+    Promise<smarthome.IntentFlow.ExecuteResponse> => {
     console.log("EXECUTE request:", executeRequest);
     // TODO(proppy): handle multiple inputs/commands.
     const command = executeRequest.inputs[0].payload.commands[0];
@@ -89,70 +85,37 @@ export class HomeApp {
 
     // Create execution response to capture individual command
     // success/failure for each devices.
-    const executeResponse =  new ExecuteResponseBuilder()
+    const executeResponse =  new smarthome.Execute.Response.Builder()
       .setRequestId(executeRequest.requestId);
 
     // Handle light device commands for all devices.
     return Promise.all(command.devices.map((device) => {
       const params = execution.params as IOnOff | IColorAbsolute | IBrightnessAbsolute;
-      const opcMessage = ((): Buffer => {
-        const stream = opcStream();
-        switch (execution.command) {
-          case "action.devices.commands.OnOff": {
-            // Convert OnOff to Fadecandy color correction message
-            // with brightness 0 or 1.
-            const brightness = (params as IOnOff).on ? 1 : 0;
-            stream.writeColorCorrection({
-              whitepoint: [brightness, brightness, brightness],
-            });
-            return stream.read();
-          }
-          case "action.devices.commands.BrightnessAbsolute": {
-            // Convert OnOff to Fadecandy color correction message.
-            const brightness = (params as IBrightnessAbsolute).brightness / 100.0;
-            stream.writeColorCorrection({
-              whitepoint: [brightness, brightness, brightness],
-            });
-            return stream.read();
-          }
-          case "action.devices.commands.ColorAbsolute": {
-            // Convert OnOff to OPC set pixel 8-bit message.
-            const rgb = (params as IColorAbsolute).color.spectrumRGB;
-            const colorBuf = Buffer.alloc(this.ledCount * 3);
-            for (let i = 0; i < colorBuf.length; i += 3) {
-              colorBuf.writeUInt8(rgb >> 16 & 0xff, i + 0); // R
-              colorBuf.writeUInt8(rgb >>  8 & 0xff, i + 1); // G
-              colorBuf.writeUInt8(rgb >>  0 & 0xff, i + 2); // B
-            }
-            stream.writePixels(0, colorBuf);
-            return stream.read();
-          }
-          default:
-            throw Error(`Unsupported command: ${execution.command}`);
-        }
-      })();
+      const opcMessage = opcMessageFromCommand(execution.command,
+                                               execution.params as ILightCommand,
+                                               this.ledCount);
       console.debug("opcMessage:", opcMessage);
       // Craft TCP request.
-      const deviceCommand = new DataFlow.TcpRequestData();
+      const deviceCommand = new smarthome.DataFlow.TcpRequestData();
       deviceCommand.requestId = executeRequest.requestId;
       deviceCommand.deviceId = device.id;
       // TCP request data is encoded as 'hex'.
       deviceCommand.data = opcMessage.toString("hex");
       deviceCommand.port = 7890;
       deviceCommand.isSecure = false;
-      deviceCommand.operation = Constants.TcpOperation.WRITE;
+      deviceCommand.operation = smarthome.Constants.TcpOperation.WRITE;
       console.debug("TcpRequestData:", deviceCommand);
       // TODO(proppy): handle send error to surface additional context.
       return this.app.getDeviceManager()
         .send(deviceCommand)
-        .then((result: DataFlow.CommandSuccess) => {
+        .then((result: smarthome.DataFlow.CommandSuccess) => {
           const state: ILightState = {
             ...params,
             online: true,
           };
           executeResponse.setSuccessState(result.deviceId, state);
         })
-        .catch((e: IntentFlow.HandlerError) => {
+        .catch((e: smarthome.IntentFlow.HandlerError) => {
           executeResponse.setErrorState(device.id, e.errorCode);
         });
     })).then(() => {
@@ -160,5 +123,43 @@ export class HomeApp {
       // Return execution response to smarthome infrastructure.
       return executeResponse.build();
     });
+  }
+}
+
+export function opcMessageFromCommand(command: string, params: ILightCommand,
+                                      ledCount: number): Buffer {
+  const stream = opcStream();
+  switch (command) {
+    case "action.devices.commands.OnOff": {
+      // Convert OnOff to Fadecandy color correction message
+      // with brightness 0 or 1.
+      const brightness = (params as IOnOff).on ? 1 : 0;
+      stream.writeColorCorrection({
+        whitepoint: [brightness, brightness, brightness],
+      });
+      return stream.read();
+    }
+    case "action.devices.commands.BrightnessAbsolute": {
+      // Convert OnOff to Fadecandy color correction message.
+      const brightness = (params as IBrightnessAbsolute).brightness / 100.0;
+      stream.writeColorCorrection({
+        whitepoint: [brightness, brightness, brightness],
+      });
+      return stream.read();
+    }
+    case "action.devices.commands.ColorAbsolute": {
+      // Convert OnOff to OPC set pixel 8-bit message.
+      const rgb = (params as IColorAbsolute).color.spectrumRGB;
+      const colorBuf = Buffer.alloc(ledCount * 3);
+      for (let i = 0; i < colorBuf.length; i += 3) {
+        colorBuf.writeUInt8(rgb >> 16 & 0xff, i + 0); // R
+        colorBuf.writeUInt8(rgb >>  8 & 0xff, i + 1); // G
+        colorBuf.writeUInt8(rgb >>  0 & 0xff, i + 2); // B
+      }
+      stream.writePixels(0, colorBuf);
+      return stream.read();
+    }
+    default:
+      throw Error(`Unsupported command: ${command}`);
   }
 }

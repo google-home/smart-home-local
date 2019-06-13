@@ -12,6 +12,7 @@
  */
 
 import test from "ava";
+import { opcMessageFromCommand } from "./app";
 import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff } from "./types";
 
 test("color interface test", (t) => {
@@ -51,4 +52,44 @@ test("onOff interface test", (t) => {
     online: true,
     on: false,
   });
+});
+
+test("opcMessageFromCommand: OnOff", (t) => {
+  const buf = opcMessageFromCommand(
+    "action.devices.commands.OnOff",
+    {on: true},
+    16,
+  );
+  t.is(buf.readUInt8(0), 0, "channel");
+  t.is(buf.readUInt8(1), 0xff, "command");
+  t.is(buf.readUInt16BE(4), 0x01, "sysex");
+  t.is(buf.readUInt16BE(6), 0x01, "sysid");
+  const colorConfigBuf = buf.slice(8);
+  t.is(buf.readUInt16BE(2), 4 + colorConfigBuf.length, "length");
+  t.deepEqual(JSON.parse(colorConfigBuf.toString()).whitepoint,
+              [1.0, 1.0, 1.0], "color config");
+});
+
+test("opcMessageFromCommand: BrightnessAbsolute", (t) => {
+  const buf = opcMessageFromCommand(
+    "action.devices.commands.BrightnessAbsolute",
+    {brightness: 50},
+    16,
+  );
+  t.is(buf.readUInt8(0), 0, "channel");
+  t.is(buf.readUInt8(1), 0xff, "command");
+  t.is(buf.readUInt16BE(4), 0x01, "sysex");
+  t.is(buf.readUInt16BE(6), 0x01, "sysid");
+  const colorConfigBuf = buf.slice(8);
+  t.is(buf.readUInt16BE(2), 4 + colorConfigBuf.length, "length");
+  t.deepEqual(JSON.parse(colorConfigBuf.toString()).whitepoint,
+              [0.5, 0.5, 0.5], "color config");
+});
+
+test("opcMessageFromCommand: ColorAbsolute", (t) => {
+  t.snapshot(opcMessageFromCommand(
+    "action.devices.commands.ColorAbsolute",
+    {color: {name: "magenta", spectrumRGB: 0xff00ff}},
+    16,
+  ));
 });

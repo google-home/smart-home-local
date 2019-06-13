@@ -27,8 +27,8 @@ const opcStream = require("opc");
 
 // HomeApp implements IDENTIFY and EXECUTE handler for smarthome local device execution.
 export class HomeApp {
-  // Returned with UDP scan data.
-  private ledCount: number = 0;
+  // Led count will be updated to match device UDP scan data in IDENTIFY.
+  private ledCount: number = 16;
 
   constructor(private readonly app: smarthome.App) {
       this.app = app;

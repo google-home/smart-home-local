@@ -1,7 +1,7 @@
 {
   "name": "local-home-sdk-sample",
   "version": "0.0.1",
-  "description": "Sample for smarthome local execution.",
+  "description": "Sample for the Local Home SDK.",
   "private": true,
   "dependencies": {
     "@google/local-home-sdk": "^0.1.0",

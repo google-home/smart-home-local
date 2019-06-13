@@ -1,4 +1,2 @@
-app/*.js
-app/*.js.map
-app/dist
-app/node_modules
+dist/
+node_modules/

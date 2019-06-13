@@ -12,24 +12,24 @@
  */
 
 export interface IColorAbsolute {
-    color: {
-        name: string;
-        spectrumRGB: number;
-    };
+  color: {
+    name: string;
+    spectrumRGB: number;
+  };
 }
 
 export interface IOnOff {
-    on: boolean;
+  on: boolean;
 }
 
 export interface IBrightnessAbsolute {
-    brightness: number;
+  brightness: number;
 }
 
 type ICommandState = IOnOff | IColorAbsolute | IBrightnessAbsolute;
 
 interface IDeviceState {
-    online?: boolean;
+  online: boolean;
 }
 
 export type ILightState = ICommandState & IDeviceState;

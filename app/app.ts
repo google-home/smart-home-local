@@ -86,70 +86,79 @@ export class HomeApp {
     const command = executeRequest.inputs[0].payload.commands[0];
     // TODO(proppy): handle multiple executions.
     const execution = command.execution[0];
-    // TODO(proppy): handle multiple devices.
-    const device = command.devices[0];
 
-    // Handle light device commands.
-    const params = execution.params as IOnOff | IColorAbsolute | IBrightnessAbsolute;
-    const state = params as ILightState;
-    const opcMessage = ((): Buffer => {
-      const stream = opcStream();
-      switch (execution.command) {
-        case "action.devices.commands.OnOff": {
-          // Convert OnOff to Fadecandy color correction message
-          // with brightness 0 or 1.
-          const brightness = (params as IOnOff).on ? 1 : 0;
-          stream.writeColorCorrection({
-            whitepoint: [brightness, brightness, brightness],
-          });
-          return stream.read();
-        }
-        case "action.devices.commands.BrightnessAbsolute": {
-          // Convert OnOff to Fadecandy color correction message.
-          const brightness = (params as IBrightnessAbsolute).brightness / 100.0;
-          stream.writeColorCorrection({
-            whitepoint: [brightness, brightness, brightness],
-          });
-          return stream.read();
-        }
-        case "action.devices.commands.ColorAbsolute": {
-          // Convert OnOff to OPC set pixel 8-bit message.
-          const rgb = (params as IColorAbsolute).color.spectrumRGB;
-          const colorBuf = Buffer.alloc(this.ledCount * 3);
-          for (let i = 0; i < colorBuf.length; i += 3) {
-            colorBuf.writeUInt8(rgb >> 16 & 0xff, i + 0); // R
-            colorBuf.writeUInt8(rgb >>  8 & 0xff, i + 1); // G
-            colorBuf.writeUInt8(rgb >>  0 & 0xff, i + 2); // B
+    // Create execution response to capture individual command
+    // success/failure for each devices.
+    const executeResponse =  new ExecuteResponseBuilder()
+      .setRequestId(executeRequest.requestId);
+
+    // Handle light device commands for all devices.
+    return Promise.all(command.devices.map((device) => {
+      const params = execution.params as IOnOff | IColorAbsolute | IBrightnessAbsolute;
+      const opcMessage = ((): Buffer => {
+        const stream = opcStream();
+        switch (execution.command) {
+          case "action.devices.commands.OnOff": {
+            // Convert OnOff to Fadecandy color correction message
+            // with brightness 0 or 1.
+            const brightness = (params as IOnOff).on ? 1 : 0;
+            stream.writeColorCorrection({
+              whitepoint: [brightness, brightness, brightness],
+            });
+            return stream.read();
           }
-          stream.writePixels(0, colorBuf);
-          return stream.read();
+          case "action.devices.commands.BrightnessAbsolute": {
+            // Convert OnOff to Fadecandy color correction message.
+            const brightness = (params as IBrightnessAbsolute).brightness / 100.0;
+            stream.writeColorCorrection({
+              whitepoint: [brightness, brightness, brightness],
+            });
+            return stream.read();
+          }
+          case "action.devices.commands.ColorAbsolute": {
+            // Convert OnOff to OPC set pixel 8-bit message.
+            const rgb = (params as IColorAbsolute).color.spectrumRGB;
+            const colorBuf = Buffer.alloc(this.ledCount * 3);
+            for (let i = 0; i < colorBuf.length; i += 3) {
+              colorBuf.writeUInt8(rgb >> 16 & 0xff, i + 0); // R
+              colorBuf.writeUInt8(rgb >>  8 & 0xff, i + 1); // G
+              colorBuf.writeUInt8(rgb >>  0 & 0xff, i + 2); // B
+            }
+            stream.writePixels(0, colorBuf);
+            return stream.read();
+          }
+          default:
+            throw Error(`Unsupported command: ${execution.command}`);
         }
-        default:
-          throw Error(`Unsupported command: ${execution.command}`);
-      }
-    })();
-    console.debug("opcMessage:", opcMessage);
-    // Craft TCP request.
-    const deviceCommand = new DataFlow.TcpRequestData();
-    deviceCommand.requestId = executeRequest.requestId;
-    deviceCommand.deviceId = device.id;
-    // TCP request data is encoded as 'hex'.
-    deviceCommand.data = opcMessage.toString("hex");
-    deviceCommand.port = 7890;
-    deviceCommand.isSecure = false;
-    deviceCommand.operation = Constants.TcpOperation.WRITE;
-    console.debug("TcpRequestData:", deviceCommand);
-    // TODO(proppy): handle send error to surface additional context.
-    return this.app.getDeviceManager()
-      .send(deviceCommand)
-      .then(() => {
-        state.online = true;
-        const executeResponse =  new ExecuteResponseBuilder()
-          .setRequestId(executeRequest.requestId)
-          .setSuccessState(device.id, state)
-          .build();
-        console.log("EXECUTE response", executeResponse);
-        return executeResponse;
-      });
+      })();
+      console.debug("opcMessage:", opcMessage);
+      // Craft TCP request.
+      const deviceCommand = new DataFlow.TcpRequestData();
+      deviceCommand.requestId = executeRequest.requestId;
+      deviceCommand.deviceId = device.id;
+      // TCP request data is encoded as 'hex'.
+      deviceCommand.data = opcMessage.toString("hex");
+      deviceCommand.port = 7890;
+      deviceCommand.isSecure = false;
+      deviceCommand.operation = Constants.TcpOperation.WRITE;
+      console.debug("TcpRequestData:", deviceCommand);
+      // TODO(proppy): handle send error to surface additional context.
+      return this.app.getDeviceManager()
+        .send(deviceCommand)
+        .then((result: DataFlow.CommandSuccess) => {
+          const state: ILightState = {
+            ...params,
+            online: true,
+          };
+          executeResponse.setSuccessState(result.deviceId, state);
+        })
+        .catch((e: IntentFlow.HandlerError) => {
+          executeResponse.setErrorState(device.id, e.errorCode);
+        });
+    })).then(() => {
+      console.log("EXECUTE response", executeResponse);
+      // Return execution response to smarthome infrastructure.
+      return executeResponse.build();
+    });
   }
 }

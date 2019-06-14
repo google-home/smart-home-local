@@ -23,7 +23,7 @@
   "scripts": {
     "build": "webpack",
     "lint": "tslint --project .",
-    "test": "tsc && ava",
+    "test": "tsc --noEmit && ava",
     "start": "webpack-dev-server"
   },
   "ava": {

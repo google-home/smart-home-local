@@ -16,8 +16,10 @@ import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff } from "./type
 
 test("color interface test", (t) => {
   const color: IColorAbsolute = { color: { name: "magenta", spectrumRGB: 0xff00ff } };
-  const state: ILightState = color;
-  state.online = true;
+  const state: ILightState = {
+    ...color,
+    online: true,
+  };
   t.deepEqual(state, {
     online: true,
     color: {
@@ -29,8 +31,10 @@ test("color interface test", (t) => {
 
 test("brightness interface test", (t) => {
   const brightness: IBrightnessAbsolute = { brightness: 42 };
-  const state: ILightState = brightness;
-  state.online = true;
+  const state: ILightState = {
+    ...brightness,
+    online: true,
+  };
   t.deepEqual(state, {
     online: true,
     brightness: 42,
@@ -39,8 +43,10 @@ test("brightness interface test", (t) => {
 
 test("onOff interface test", (t) => {
   const onOff: IOnOff = { on: false };
-  const state: ILightState = onOff;
-  state.online = true;
+  const state: ILightState = {
+    ...onOff,
+    online: true,
+  };
   t.deepEqual(state, {
     online: true,
     on: false,

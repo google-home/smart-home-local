@@ -11,9 +11,27 @@
  * limitations under the License.
  */
 
+/// <reference types="@google/local-home-sdk" />
+
 import test from "ava";
-import { opcMessageFromCommand } from "./app";
-import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff } from "./types";
+
+import * as sinon from "sinon";
+import { HomeApp, opcMessageFromCommand } from "./app";
+import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff, IFakecandyData } from "./types";
+import { encode as cborEncode } from "cbor";
+
+test.before((t) => {
+  (global as any).smarthome = {
+    Intents: {
+      IDENTIFY: "action.devices.IDENTIFY",
+    },
+    IntentFlow: {
+      IndicationMode: {
+        BLINK: "BLINK",
+      },
+    },
+  };
+});
 
 test("color interface test", (t) => {
   const color: IColorAbsolute = { color: { name: "magenta", spectrumRGB: 0xff00ff } };
@@ -92,4 +110,45 @@ test("opcMessageFromCommand: ColorAbsolute", (t) => {
     {color: {name: "magenta", spectrumRGB: 0xff00ff}},
     16,
   ));
+});
+
+function smarthomeAppFake(): smarthome.App {
+  return {
+    getDeviceManager: sinon.fake(),
+    listen: sinon.fake(),
+    onExecute: sinon.fake(),
+    onIdentify: sinon.fake(),
+    onReachableDevices: sinon.fake(),
+  };
+}
+
+test("IDENTIFY handler", async (t) => {
+  const app = new HomeApp(smarthomeAppFake());
+  const deviceData: IFakecandyData = {
+    id: "device-local-id",
+    model: "device-mode",
+    hw_rev: "hw-rev",
+    fw_rev: "fw-rev",
+    leds: 16,
+  };
+  const udpScanPayload = cborEncode(deviceData);
+  const identifyResponse = await app.identifyHandler({
+    requestId: "request-id",
+    inputs: [
+      {
+        intent: smarthome.Intents.IDENTIFY,
+        payload: {
+          device: {
+            radioTypes: [],
+            udpScanData: udpScanPayload.toString("hex"),
+          },
+          structureData: {},
+          params: {},
+        },
+      },
+    ],
+    devices: [],
+  });
+  t.is(identifyResponse.payload.device.verificationId,
+       "device-local-id");
 });

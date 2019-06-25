@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-/// <reference types="webpack-env" />
+/// <reference types="@google/local-home-sdk" />
 
 import {HomeApp} from "./app";
 

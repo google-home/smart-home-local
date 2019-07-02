@@ -25,6 +25,7 @@ const opcStream = require("opc");
 export class HomeApp {
   // Led count will be updated to match device UDP scan data in IDENTIFY.
   private ledCount: number = 16;
+  private portNumber: number = 7890;
 
   constructor(private readonly app: smarthome.App) {
       this.app = app;
@@ -50,6 +51,7 @@ export class HomeApp {
         }
         console.debug("discoveryData:", discoveryData);
         this.ledCount = discoveryData.leds;
+        this.portNumber = discoveryData.port;
         const identifyResponse = {
           intent: smarthome.Intents.IDENTIFY,
           requestId: identifyRequest.requestId,
@@ -101,7 +103,7 @@ export class HomeApp {
       deviceCommand.deviceId = device.id;
       // TCP request data is encoded as 'hex'.
       deviceCommand.data = opcMessage.toString("hex");
-      deviceCommand.port = 7890;
+      deviceCommand.port = this.portNumber;
       deviceCommand.isSecure = false;
       deviceCommand.operation = smarthome.Constants.TcpOperation.WRITE;
       console.debug("TcpRequestData:", deviceCommand);

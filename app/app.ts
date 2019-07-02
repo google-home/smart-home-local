@@ -63,7 +63,6 @@ export class HomeApp {
                 hwVersion: discoveryData.hw_rev,
                 swVersion: discoveryData.fw_rev,
               },
-              indicationMode: smarthome.IntentFlow.IndicationMode.BLINK,
               verificationId: discoveryData.id,
             },
           },

@@ -55,6 +55,7 @@ Note: The local development server needs to listen on the same local network as 
 
 #### Deploy to Firebase Hosting
 ```
+npm run build
 firebase use --add FIREBASE_PROJECT_ID
 firebase deploy
 ```

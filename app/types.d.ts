@@ -40,4 +40,5 @@ export interface IFakecandyData {
   hw_rev: string;
   fw_rev: string;
   leds: number;
+  port: number;
 }

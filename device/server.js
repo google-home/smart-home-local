@@ -85,7 +85,8 @@ socket.on('message', (msg, rinfo) => {
     model: argv.device_model,
     hw_rev: argv.hardware_revision,
     fw_rev: argv.firmware_revision,
-    leds: argv.led_count
+    leds: argv.led_count,
+    port: argv.opc_port
   }
   const responsePacket = cbor.encode(discoveryData)
   socket.send(responsePacket, rinfo.port, rinfo.address, (err) => {

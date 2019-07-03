@@ -107,7 +107,6 @@ export class HomeApp {
       deviceCommand.isSecure = false;
       deviceCommand.operation = smarthome.Constants.TcpOperation.WRITE;
       console.debug("TcpRequestData:", deviceCommand);
-      // TODO(proppy): handle send error to surface additional context.
       return this.app.getDeviceManager()
         .send(deviceCommand)
         .then((result: smarthome.DataFlow.CommandSuccess) => {

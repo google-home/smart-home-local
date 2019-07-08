@@ -130,6 +130,7 @@ test("IDENTIFY handler", async (t) => {
     hw_rev: "hw-rev",
     fw_rev: "fw-rev",
     leds: 16,
+    port: 7890,
   };
   const udpScanPayload = cborEncode(deviceData);
   const identifyResponse = await app.identifyHandler({

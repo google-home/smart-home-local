@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/sinon": "^7.0.13",
     "ava": "^2.1.0",
+    "firebase-tools": "^7.0.2",
     "html-webpack-plugin": "^3.2.0",
     "sinon": "^7.3.2",
     "ts-loader": "^6.0.2",
@@ -26,7 +27,8 @@
     "build": "webpack",
     "lint": "tslint --project .",
     "test": "tsc --noEmit && ava",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "deploy": "firebase deploy --only hosting"
   },
   "ava": {
     "compileEnhancements": false,

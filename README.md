@@ -54,9 +54,8 @@ Note: The local development server needs to listen on the same local network as 
 
 #### Deploy to Firebase Hosting
 ```
-npm run build
-firebase use --add FIREBASE_PROJECT_ID
-firebase deploy
+npm build --prefix app/
+npm run deploy --prefix app/ -- --project FIREBASE_PROJECT_ID
 ```
 - Go to the [smart home project in the Actions console](https://console.actions.google.com/)
 - In `Test > On device testing`: set the development URL to `http://FIREBASE_PROJECT_ID.firebaseapp.com/`

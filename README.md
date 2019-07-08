@@ -45,7 +45,6 @@ or deploy it to a publicly reacheable URL endpoint.
 
 - Start the local development server:
 ```
-npm install --prefix app/ @google/local-home-sdk
 npm install --prefix app/
 npm start --prefix app/ -- --public 0.0.0.0:8080
 ```

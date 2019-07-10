@@ -10,11 +10,10 @@
     "opc": "^1.1.3"
   },
   "devDependencies": {
-    "@types/sinon": "^7.0.13",
     "ava": "^2.1.0",
     "firebase-tools": "^7.0.2",
+    "c8": "^5.0.1",
     "html-webpack-plugin": "^3.2.0",
-    "sinon": "^7.3.2",
     "ts-loader": "^6.0.2",
     "ts-node": "^8.2.0",
     "tslint": "^5.17.0",
@@ -26,7 +25,8 @@
   "scripts": {
     "build": "webpack",
     "lint": "tslint --project .",
-    "test": "tsc --noEmit && ava",
+    "compile": "tsc --noEmit",
+    "test": "c8 ava",
     "start": "webpack-dev-server",
     "deploy": "firebase deploy --only hosting"
   },

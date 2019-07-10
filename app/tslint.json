@@ -9,7 +9,8 @@
       "no-bitwise": false,
       "object-literal-sort-keys": false,
       "no-var-requires": false,
-      "ordered-imports": false
+      "ordered-imports": false,
+      "max-classes-per-file": [true, 1, "exclude-class-expressions"]
     },
     "rulesDirectory": []
 }

@@ -15,20 +15,90 @@
 
 import test from "ava";
 
-import * as sinon from "sinon";
 import { HomeApp, opcMessageFromCommand } from "./app";
 import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff, IFakecandyData } from "./types";
 import { encode as cborEncode } from "cbor";
+
+function smarthomeDeviceManagerStub(deviceId: string, error?: any) {
+  const DeviceManager = class {
+    public commands = new Array<smarthome.DataFlow.TcpRequestData>();
+    public send(command: smarthome.DataFlow.TcpRequestData): Promise<any> {
+      if (error) {
+        return Promise.reject(error);
+      }
+      this.commands.push(command);
+      return Promise.resolve({
+        deviceId,
+      });
+    }
+  };
+  return new DeviceManager();
+}
+
+function smarthomeAppStub(deviceManager?: any) {
+  const App = class {
+    private version: string;
+    constructor(version: string) {
+      this.version = version;
+    }
+    public getDeviceManager() { return deviceManager; }
+    public listen() { return Promise.resolve(); }
+    public onExecute() { return this; }
+    public onIdentify() { return this; }
+    public onReachableDevices() { return this; }
+  };
+  return new App("test-version");
+}
 
 test.before((t) => {
   (global as any).smarthome = {
     Intents: {
       IDENTIFY: "action.devices.IDENTIFY",
+      EXECUTE: "action.devices.EXECUTE",
     },
-    IntentFlow: {
-      IndicationMode: {
-        BLINK: "BLINK",
+    DataFlow: {
+      TcpRequestData: class {
       },
+    },
+    Constants: {
+      TcpOperation: {
+        WRITE: "WRITE",
+      },
+    },
+    Execute: {
+      Response: {
+        Builder: class {
+          private requestId: string = "";
+          private commands: smarthome.IntentFlow.ExecuteResponseCommands[] = [];
+          public setRequestId(requestId: string) {
+            this.requestId = requestId;
+            return this;
+          }
+          public setSuccessState(deviceId: string, state: object) {
+            this.commands.push({
+              ids: [deviceId],
+              status: "SUCCESS",
+              states: state,
+            });
+          }
+          public setErrorState(deviceId: string, errorCode: string) {
+            this.commands.push({
+              ids: [deviceId],
+              status: "ERROR",
+              errorCode,
+            });
+          }
+          public build() {
+            return {
+              requestId: this.requestId,
+              payload: {
+                commands: this.commands,
+              },
+            };
+          }
+        },
+      },
+
     },
   };
 });
@@ -112,18 +182,8 @@ test("opcMessageFromCommand: ColorAbsolute", (t) => {
   ));
 });
 
-function smarthomeAppFake(): smarthome.App {
-  return {
-    getDeviceManager: sinon.fake(),
-    listen: sinon.fake(),
-    onExecute: sinon.fake(),
-    onIdentify: sinon.fake(),
-    onReachableDevices: sinon.fake(),
-  };
-}
-
 test("IDENTIFY handler", async (t) => {
-  const app = new HomeApp(smarthomeAppFake());
+  const app = new HomeApp(smarthomeAppStub());
   const deviceData: IFakecandyData = {
     id: "device-local-id",
     model: "device-mode",
@@ -151,5 +211,177 @@ test("IDENTIFY handler", async (t) => {
     devices: [],
   });
   t.is(identifyResponse.payload.device.verificationId,
-       "device-local-id");
+       deviceData.id);
+});
+
+test("EXECUTE handler OnOff", async (t) => {
+  const deviceId = "device-id";
+  const command = "action.devices.commands.OnOff";
+  const params = {
+    on: true,
+  };
+  const deviceManager = smarthomeDeviceManagerStub(deviceId);
+  const smarthomeApp = smarthomeAppStub(deviceManager);
+  const app = new HomeApp(smarthomeApp);
+  const executeResponse = await app.executeHandler({
+    requestId: "request-id",
+    inputs: [
+      {
+        intent: smarthome.Intents.EXECUTE,
+        payload: {
+          commands: [{
+            execution: [{
+              command,
+              params,
+            }],
+            devices: [{
+              id: deviceId,
+            }],
+          }],
+          structureData: {},
+        },
+      },
+    ],
+  });
+  t.deepEqual(executeResponse.payload.commands, [{
+    ids: [deviceId],
+    status: "SUCCESS",
+    states: {
+      ...params,
+      online: true,
+    },
+  }]);
+  t.is(deviceManager.commands.length, 1);
+  t.is(deviceManager.commands[0].deviceId, deviceId);
+  t.is(deviceManager.commands[0].operation, "WRITE");
+  t.is(deviceManager.commands[0].data,
+       opcMessageFromCommand(command, params, 16).toString("hex"));
+});
+
+test("EXECUTE handler ColorAbsolute", async (t) => {
+  const deviceId = "device-id";
+  const command = "action.devices.commands.ColorAbsolute";
+  const params = {
+    color: {
+      name: "magenta",
+      spectrumRGB: 0xff00ff,
+    },
+  };
+  const deviceManager = smarthomeDeviceManagerStub(deviceId);
+  const smarthomeApp = smarthomeAppStub(deviceManager);
+  const app = new HomeApp(smarthomeApp);
+  const executeResponse = await app.executeHandler({
+    requestId: "request-id",
+    inputs: [
+      {
+        intent: smarthome.Intents.EXECUTE,
+        payload: {
+          commands: [{
+            execution: [{
+              command,
+              params,
+            }],
+            devices: [{
+              id: deviceId,
+            }],
+          }],
+          structureData: {},
+        },
+      },
+    ],
+  });
+  t.deepEqual(executeResponse.payload.commands, [{
+    ids: [deviceId],
+    status: "SUCCESS",
+    states: {
+      ...params,
+      online: true,
+    },
+  }]);
+  t.is(deviceManager.commands.length, 1);
+  t.is(deviceManager.commands[0].deviceId, deviceId);
+  t.is(deviceManager.commands[0].operation, "WRITE");
+  t.is(deviceManager.commands[0].data,
+       opcMessageFromCommand(command, params, 16).toString("hex"));
+});
+
+test("EXECUTE handler BrightnessAbsolute", async (t) => {
+  const deviceId = "device-id";
+  const command = "action.devices.commands.BrightnessAbsolute";
+  const params = {
+    brightness: 99,
+  };
+  const deviceManager = smarthomeDeviceManagerStub(deviceId);
+  const smarthomeApp = smarthomeAppStub(deviceManager);
+  const app = new HomeApp(smarthomeApp);
+  const executeResponse = await app.executeHandler({
+    requestId: "request-id",
+    inputs: [
+      {
+        intent: smarthome.Intents.EXECUTE,
+        payload: {
+          commands: [{
+            execution: [{
+              command,
+              params,
+            }],
+            devices: [{
+              id: deviceId,
+            }],
+          }],
+          structureData: {},
+        },
+      },
+    ],
+  });
+  t.deepEqual(executeResponse.payload.commands, [{
+    ids: [deviceId],
+    status: "SUCCESS",
+    states: {
+      ...params,
+      online: true,
+    },
+  }]);
+  t.is(deviceManager.commands.length, 1);
+  t.is(deviceManager.commands[0].deviceId, deviceId);
+  t.is(deviceManager.commands[0].operation, "WRITE");
+  t.is(deviceManager.commands[0].data,
+       opcMessageFromCommand(command, params, 16).toString("hex"));
+});
+
+test("EXECUTE handler failure", async (t) => {
+  const deviceId = "device-id";
+  const command = "action.devices.commands.OnOff";
+  const params = {
+    on: true,
+  };
+  const deviceManager = smarthomeDeviceManagerStub(deviceId, {errorCode: "some-error"});
+  const smarthomeApp = smarthomeAppStub(deviceManager);
+  const app = new HomeApp(smarthomeApp);
+  const executeResponse = await app.executeHandler({
+    requestId: "request-id",
+    inputs: [
+      {
+        intent: smarthome.Intents.EXECUTE,
+        payload: {
+          commands: [{
+            execution: [{
+              command,
+              params,
+            }],
+            devices: [{
+              id: deviceId,
+            }],
+          }],
+          structureData: {},
+        },
+      },
+    ],
+  });
+  t.deepEqual(executeResponse.payload.commands, [{
+    ids: [deviceId],
+    status: "ERROR",
+    errorCode: "some-error",
+  }]);
+  t.is(deviceManager.commands.length, 0);
 });

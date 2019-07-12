@@ -54,7 +54,7 @@ Note: The local development server needs to listen on the same local network as 
 
 #### Deploy to Firebase Hosting
 ```
-npm build --prefix app/
+npm run build --prefix app/
 npm run deploy --prefix app/ -- --project FIREBASE_PROJECT_ID
 ```
 - Go to the [smart home project in the Actions console](https://console.actions.google.com/)

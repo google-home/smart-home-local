@@ -17,7 +17,9 @@ import test from "ava";
 
 import { HomeApp, opcMessageFromCommand } from "./app";
 import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff, IFakecandyData } from "./types";
-import { encode as cborEncode } from "cbor";
+
+// TODO(proppy): add typings
+const cbor = require("cbor");
 
 function smarthomeDeviceManagerStub(deviceId: string, error?: any) {
   const DeviceManager = class {
@@ -192,7 +194,7 @@ test("IDENTIFY handler", async (t) => {
     leds: 16,
     port: 7890,
   };
-  const udpScanPayload = cborEncode(deviceData);
+  const udpScanPayload = cbor.encode(deviceData);
   const identifyResponse = await app.identifyHandler({
     requestId: "request-id",
     inputs: [

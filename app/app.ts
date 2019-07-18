@@ -13,12 +13,12 @@
 
 /// <reference types="@google/local-home-sdk" />
 
-import { decodeFirst as cborDecodeFirst } from "cbor";
 import { IBrightnessAbsolute, IColorAbsolute, IOnOff,
          ILightCommand, ILightState,
          IFakecandyData } from "./types";
 
 // TODO(proppy): add typings
+const cbor = require("cbor");
 const opcStream = require("opc");
 
 // HomeApp implements IDENTIFY and EXECUTE handler for smarthome local device execution.
@@ -32,7 +32,7 @@ export class HomeApp {
   }
 
   // identifyHandlers decode UDP scan data and structured device information.
-  public identifyHandler = (identifyRequest: smarthome.IntentFlow.IdentifyRequest):
+  public identifyHandler = async (identifyRequest: smarthome.IntentFlow.IdentifyRequest):
     Promise<smarthome.IntentFlow.IdentifyResponse> => {
     console.log("IDENTIFY request", identifyRequest);
     // TODO(proppy): handle multiple inputs.
@@ -43,40 +43,34 @@ export class HomeApp {
     // Raw discovery data are encoded as 'hex'.
     const udpScanData = Buffer.from(device.udpScanData, "hex");
     console.debug("udpScanData:", udpScanData);
-    return new Promise((resolve, reject) => {
-      // Device encoded discovery payload in CBOR.
-      cborDecodeFirst(udpScanData, (error: Error, discoveryData: IFakecandyData) => {
-        if (error != null) {
-          return reject(error);
-        }
-        console.debug("discoveryData:", discoveryData);
-        this.ledCount = discoveryData.leds;
-        this.portNumber = discoveryData.port;
-        const identifyResponse = {
-          intent: smarthome.Intents.IDENTIFY,
-          requestId: identifyRequest.requestId,
-          payload: {
-            device: {
-              id: device.id || "deviceId",
-              type: "action.devices.types.LIGHT",
-              deviceInfo: {
-                manufacturer: "Colorful light maker",
-                model: discoveryData.model,
-                hwVersion: discoveryData.hw_rev,
-                swVersion: discoveryData.fw_rev,
-              },
-              verificationId: discoveryData.id,
-            },
+    // Device encoded discovery payload in CBOR.
+    const discoveryData: IFakecandyData = await cbor.decodeFirst(udpScanData);
+    console.debug("discoveryData:", discoveryData);
+    this.ledCount = discoveryData.leds;
+    this.portNumber = discoveryData.port;
+    const identifyResponse = {
+      intent: smarthome.Intents.IDENTIFY,
+      requestId: identifyRequest.requestId,
+      payload: {
+        device: {
+          id: device.id || "deviceId",
+          type: "action.devices.types.LIGHT",
+          deviceInfo: {
+            manufacturer: "Colorful light maker",
+            model: discoveryData.model,
+            hwVersion: discoveryData.hw_rev,
+            swVersion: discoveryData.fw_rev,
           },
-        };
-        console.log("IDENTIFY response", identifyResponse);
-        resolve(identifyResponse);
-      });
-    });
+          verificationId: discoveryData.id,
+        },
+      },
+    };
+    console.log("IDENTIFY response", identifyResponse);
+    return identifyResponse;
   }
 
   // executeHandler send openpixelcontrol messages corresponding to light device commands.
-  public executeHandler = (executeRequest: smarthome.IntentFlow.ExecuteRequest):
+  public executeHandler = async (executeRequest: smarthome.IntentFlow.ExecuteRequest):
     Promise<smarthome.IntentFlow.ExecuteResponse> => {
     console.log("EXECUTE request:", executeRequest);
     // TODO(proppy): handle multiple inputs/commands.
@@ -90,7 +84,7 @@ export class HomeApp {
       .setRequestId(executeRequest.requestId);
 
     // Handle light device commands for all devices.
-    return Promise.all(command.devices.map((device) => {
+    await Promise.all(command.devices.map(async (device) => {
       const params = execution.params as IOnOff | IColorAbsolute | IBrightnessAbsolute;
       const opcMessage = opcMessageFromCommand(execution.command,
                                                execution.params as ILightCommand,
@@ -106,23 +100,21 @@ export class HomeApp {
       deviceCommand.isSecure = false;
       deviceCommand.operation = smarthome.Constants.TcpOperation.WRITE;
       console.debug("TcpRequestData:", deviceCommand);
-      return this.app.getDeviceManager()
-        .send(deviceCommand)
-        .then((result: smarthome.DataFlow.CommandSuccess) => {
-          const state: ILightState = {
-            ...params,
-            online: true,
-          };
-          executeResponse.setSuccessState(result.deviceId, state);
-        })
-        .catch((e: smarthome.IntentFlow.HandlerError) => {
-          executeResponse.setErrorState(device.id, e.errorCode);
-        });
-    })).then(() => {
-      console.log("EXECUTE response", executeResponse);
-      // Return execution response to smarthome infrastructure.
-      return executeResponse.build();
-    });
+      try {
+        const result = await this.app.getDeviceManager()
+          .send(deviceCommand);
+        const state: ILightState = {
+          ...params,
+          online: true,
+        };
+        executeResponse.setSuccessState(result.deviceId, state);
+      } catch (e) {
+        executeResponse.setErrorState(device.id, e.errorCode);
+      }
+    }));
+    console.log("EXECUTE response", executeResponse);
+    // Return execution response to smarthome infrastructure.
+    return executeResponse.build();
   }
 }
 

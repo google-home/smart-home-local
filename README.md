@@ -24,13 +24,13 @@ This sample shows how to integrate with the [Local Home SDK](https://developers.
      - **UDP discovery address**: `255.255.255.255`
      - **UDP discovery port in**: `3312`
      - **UDP discovery port out**: `3311`
-     - **UDP discovery packet**: `ping`
+     - **UDP discovery packet**: `A5A5A5A5`
 - Start the virtual light strip server:
 ```
 npm install --prefix device/
 npm start --prefix device/ -- \
           --udp_discovery_port 3311 \
-          --udp_discovery_packet ping \
+          --udp_discovery_packet A5A5A5A5 \
           --device_id fakecandy-0
 ```
 This starts a server that replies to UDP discovery packets with device information and displays [openpixelcontrol](http://openpixelcontrol.org/) commands to the terminal in a colorful way.

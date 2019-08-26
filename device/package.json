@@ -6,7 +6,8 @@
   "main": "server.js",
   "scripts": {
     "lint": "tslint --project .",
-    "build": "tsc --noEmit",
+    "compile": "tsc --noEmit",
+    "build": "tsc",
     "start": "ts-node server.ts"
   },
   "author": "Google",

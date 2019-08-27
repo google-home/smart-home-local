@@ -24,7 +24,7 @@ const argv = yargs
     demandOption: true,
   })
   .option("udp_discovery_packet", {
-    describe: "packet content to match for UDP discovery query",
+    describe: "hex encoded packet content to match for UDP discovery query",
     type: "string",
     demandOption: true,
   })
@@ -73,12 +73,12 @@ import * as dgram from "dgram";
 const socket = dgram.createSocket("udp4");
 // Handle discovery request.
 socket.on("message", (msg, rinfo) => {
-  const incomingPacket = msg.toString("utf-8");
-  if (incomingPacket !== argv.udp_discovery_packet) {
+  const discoveryPacket = Buffer.from(argv.udp_discovery_packet, "hex");
+  if (msg.compare(discoveryPacket) !== 0) {
     console.warn("received unknown payload:", msg, "from:", rinfo);
     return;
   }
-  console.log("received discovery payload:", incomingPacket, "from:", rinfo);
+  console.log("received discovery payload:", msg, "from:", rinfo);
   // Reply to discovery request with device parameters encoded in CBOR.
   // note: any encoding/properties could be used as long as the app-side can
   // interpret the payload.

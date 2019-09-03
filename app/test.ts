@@ -15,8 +15,8 @@
 
 import test from "ava";
 
-import { HomeApp, opcMessageFromCommand } from "./app";
-import { IBrightnessAbsolute, IColorAbsolute, ILightState, IOnOff, IFakecandyData } from "./types";
+import { HomeApp } from "./app";
+import { IColorAbsolute, IDiscoveryData } from "./types";
 
 // TODO(proppy): add typings
 const cbor = require("cbor");
@@ -105,94 +105,15 @@ test.before((t) => {
   };
 });
 
-test("color interface test", (t) => {
-  const color: IColorAbsolute = { color: { name: "magenta", spectrumRGB: 0xff00ff } };
-  const state: ILightState = {
-    ...color,
-    online: true,
-  };
-  t.deepEqual(state, {
-    online: true,
-    color: {
-      name: "magenta",
-      spectrumRGB: 0xff00ff,
-    },
-  });
-});
-
-test("brightness interface test", (t) => {
-  const brightness: IBrightnessAbsolute = { brightness: 42 };
-  const state: ILightState = {
-    ...brightness,
-    online: true,
-  };
-  t.deepEqual(state, {
-    online: true,
-    brightness: 42,
-  });
-});
-
-test("onOff interface test", (t) => {
-  const onOff: IOnOff = { on: false };
-  const state: ILightState = {
-    ...onOff,
-    online: true,
-  };
-  t.deepEqual(state, {
-    online: true,
-    on: false,
-  });
-});
-
-test("opcMessageFromCommand: OnOff", (t) => {
-  const buf = opcMessageFromCommand(
-    "action.devices.commands.OnOff",
-    {on: true},
-    16,
-  );
-  t.is(buf.readUInt8(0), 0, "channel");
-  t.is(buf.readUInt8(1), 0xff, "command");
-  t.is(buf.readUInt16BE(4), 0x01, "sysex");
-  t.is(buf.readUInt16BE(6), 0x01, "sysid");
-  const colorConfigBuf = buf.slice(8);
-  t.is(buf.readUInt16BE(2), 4 + colorConfigBuf.length, "length");
-  t.deepEqual(JSON.parse(colorConfigBuf.toString()).whitepoint,
-              [1.0, 1.0, 1.0], "color config");
-});
-
-test("opcMessageFromCommand: BrightnessAbsolute", (t) => {
-  const buf = opcMessageFromCommand(
-    "action.devices.commands.BrightnessAbsolute",
-    {brightness: 50},
-    16,
-  );
-  t.is(buf.readUInt8(0), 0, "channel");
-  t.is(buf.readUInt8(1), 0xff, "command");
-  t.is(buf.readUInt16BE(4), 0x01, "sysex");
-  t.is(buf.readUInt16BE(6), 0x01, "sysid");
-  const colorConfigBuf = buf.slice(8);
-  t.is(buf.readUInt16BE(2), 4 + colorConfigBuf.length, "length");
-  t.deepEqual(JSON.parse(colorConfigBuf.toString()).whitepoint,
-              [0.5, 0.5, 0.5], "color config");
-});
-
-test("opcMessageFromCommand: ColorAbsolute", (t) => {
-  t.snapshot(opcMessageFromCommand(
-    "action.devices.commands.ColorAbsolute",
-    {color: {name: "magenta", spectrumRGB: 0xff00ff}},
-    16,
-  ));
-});
-
+// TODO(proppy): add IDENTIFY hub test
 test("IDENTIFY handler", async (t) => {
   const app = new HomeApp(smarthomeAppStub());
-  const deviceData: IFakecandyData = {
+  const deviceData: IDiscoveryData = {
     id: "device-local-id",
     model: "device-mode",
     hw_rev: "hw-rev",
     fw_rev: "fw-rev",
-    leds: 16,
-    port: 7890,
+    channels: [1],
   };
   const udpScanPayload = cbor.encode(deviceData);
   const identifyResponse = await app.identifyHandler({
@@ -218,50 +139,8 @@ test("IDENTIFY handler", async (t) => {
        deviceData.id);
 });
 
-test("EXECUTE handler OnOff", async (t) => {
-  const deviceId = "device-id";
-  const command = "action.devices.commands.OnOff";
-  const params = {
-    on: true,
-  };
-  const deviceManager = smarthomeDeviceManagerStub(deviceId);
-  const smarthomeApp = smarthomeAppStub(deviceManager);
-  const app = new HomeApp(smarthomeApp);
-  const executeResponse = await app.executeHandler({
-    requestId: "request-id",
-    inputs: [
-      {
-        intent: smarthome.Intents.EXECUTE,
-        payload: {
-          commands: [{
-            execution: [{
-              command,
-              params,
-            }],
-            devices: [{
-              id: deviceId,
-            }],
-          }],
-          structureData: {},
-        },
-      },
-    ],
-  });
-  t.deepEqual(executeResponse.payload.commands, [{
-    ids: [deviceId],
-    status: "SUCCESS",
-    states: {
-      ...params,
-      online: true,
-    },
-  }]);
-  t.is(deviceManager.commands.length, 1);
-  t.is(deviceManager.commands[0].deviceId, deviceId);
-  t.is(deviceManager.commands[0].operation, "WRITE");
-  t.is(deviceManager.commands[0].data,
-       opcMessageFromCommand(command, params, 16).toString("hex"));
-});
-
+// TODO(proppy): add REACHEABLE_DEVICES hub test
+// TODO(proppy): add EXECUTE hub test
 test("EXECUTE handler ColorAbsolute", async (t) => {
   const deviceId = "device-id";
   const command = "action.devices.commands.ColorAbsolute";
@@ -287,6 +166,10 @@ test("EXECUTE handler ColorAbsolute", async (t) => {
             }],
             devices: [{
               id: deviceId,
+              customData: {
+                channel: 1,
+                leds: 8,
+              },
             }],
           }],
           structureData: {},
@@ -305,59 +188,17 @@ test("EXECUTE handler ColorAbsolute", async (t) => {
   t.is(deviceManager.commands.length, 1);
   t.is(deviceManager.commands[0].deviceId, deviceId);
   t.is(deviceManager.commands[0].operation, "WRITE");
-  t.is(deviceManager.commands[0].data,
-       opcMessageFromCommand(command, params, 16).toString("hex"));
-});
-
-test("EXECUTE handler BrightnessAbsolute", async (t) => {
-  const deviceId = "device-id";
-  const command = "action.devices.commands.BrightnessAbsolute";
-  const params = {
-    brightness: 99,
-  };
-  const deviceManager = smarthomeDeviceManagerStub(deviceId);
-  const smarthomeApp = smarthomeAppStub(deviceManager);
-  const app = new HomeApp(smarthomeApp);
-  const executeResponse = await app.executeHandler({
-    requestId: "request-id",
-    inputs: [
-      {
-        intent: smarthome.Intents.EXECUTE,
-        payload: {
-          commands: [{
-            execution: [{
-              command,
-              params,
-            }],
-            devices: [{
-              id: deviceId,
-            }],
-          }],
-          structureData: {},
-        },
-      },
-    ],
-  });
-  t.deepEqual(executeResponse.payload.commands, [{
-    ids: [deviceId],
-    status: "SUCCESS",
-    states: {
-      ...params,
-      online: true,
-    },
-  }]);
-  t.is(deviceManager.commands.length, 1);
-  t.is(deviceManager.commands[0].deviceId, deviceId);
-  t.is(deviceManager.commands[0].operation, "WRITE");
-  t.is(deviceManager.commands[0].data,
-       opcMessageFromCommand(command, params, 16).toString("hex"));
+  t.snapshot(deviceManager.commands[0].data);
 });
 
 test("EXECUTE handler failure", async (t) => {
   const deviceId = "device-id";
-  const command = "action.devices.commands.OnOff";
+  const command = "action.devices.commands.ColorAbsolute";
   const params = {
-    on: true,
+    color: {
+      name: "magenta",
+      spectrumRGB: 0xff00ff,
+    },
   };
   const deviceManager = smarthomeDeviceManagerStub(deviceId, {errorCode: "some-error"});
   const smarthomeApp = smarthomeAppStub(deviceManager);
@@ -375,6 +216,10 @@ test("EXECUTE handler failure", async (t) => {
             }],
             devices: [{
               id: deviceId,
+              customData: {
+                channel: 1,
+                leds: 8,
+              },
             }],
           }],
           structureData: {},

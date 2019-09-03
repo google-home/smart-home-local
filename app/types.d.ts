@@ -18,27 +18,23 @@ export interface IColorAbsolute {
   };
 }
 
-export interface IOnOff {
-  on: boolean;
-}
-
-export interface IBrightnessAbsolute {
-  brightness: number;
-}
-
-export type ILightCommand = IOnOff | IColorAbsolute | IBrightnessAbsolute;
-
-interface IDeviceState {
-  online: boolean;
-}
-
-export type ILightState = ILightCommand & IDeviceState;
-
-export interface IFakecandyData {
+export interface IDiscoveryData {
   id: string;
   model: string;
   hw_rev: string;
   fw_rev: string;
+  channels: Array<number>;
+}
+
+export interface ICustomData {
+  channel: number;
   leds: number;
   port: number;
+  proxy: string;
 }
+
+export interface IStrandInfo {
+  channel: number;
+  leds: number;
+}
+

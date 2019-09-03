@@ -50,21 +50,26 @@ const argv = yargs
     default: 7890,
   })
   .option("char_start", {
-    describe: "character to show before leds",
+    describe: "character to show before each strand leds",
     default: "⚞",
   })
   .option("char_led", {
-    describe: "character to show for leds",
+    describe: "character to show for each strand leds",
     default: "◉",
   })
   .option("char_end", {
-    describe: "character to show after leds",
+    describe: "character to show after each strand leds",
     default: "⚟",
   })
   .option("led_count", {
-    describe: "number of leds",
+    describe: "number of leds per strands",
     default: 16,
   })
+  .option("channel", {
+    describe: "add a new led strand with the corresponding channel number",
+    default: [1],
+    array: true,
+   })
   .argv;
 
 import * as cbor from "cbor";
@@ -78,7 +83,7 @@ socket.on("message", (msg, rinfo) => {
     console.warn("received unknown payload:", msg, "from:", rinfo);
     return;
   }
-  console.log("received discovery payload:", msg, "from:", rinfo);
+  console.debug("received discovery payload:", msg, "from:", rinfo);
   // Reply to discovery request with device parameters encoded in CBOR.
   // note: any encoding/properties could be used as long as the app-side can
   // interpret the payload.
@@ -87,8 +92,7 @@ socket.on("message", (msg, rinfo) => {
     model: argv.device_model,
     hw_rev: argv.hardware_revision,
     fw_rev: argv.firmware_revision,
-    leds: argv.led_count,
-    port: argv.opc_port,
+    channels: argv.channel,
   };
   const responsePacket = cbor.encode(discoveryData);
   socket.send(responsePacket, rinfo.port, rinfo.address, (error) => {
@@ -96,7 +100,7 @@ socket.on("message", (msg, rinfo) => {
       console.error("failed to send ack:", error);
       return;
     }
-    console.log("sent discovery response:", discoveryData, "to:", rinfo);
+    console.debug("sent discovery response:", discoveryData, "to:", rinfo);
   });
 });
 socket.on("listening", () => {
@@ -106,44 +110,46 @@ socket.on("listening", () => {
 import chalk from "chalk";
 import * as net from "net";
 import {IOPCMessage} from "./types";
+const opcStream = require("opc");
 const opcParser = require("opc/parser");
 const opcStrand = require("opc/strand");
 
-// Default strand color is white.
-let strand = opcStrand(Buffer.alloc(argv.led_count * 3).fill(0xff));
-// Default strand is off.
-let whitepoint = [0.0, 0.0, 0.0];
+// Default strands color is white.
+const strands = new Map(
+  argv.channel.map((c) => [c, opcStrand(Buffer.alloc(argv.led_count * 3).fill(0xff))]),
+);
 
 // Handle OPC messages.
 const server = net.createServer((conn) => {
   conn.pipe(opcParser()).on("data", (message: IOPCMessage) => {
+    console.debug("received command:", message.command, message.data);
     switch (message.command) {
-      case 0: // Set 8-bit pixel colours.
-        strand = opcStrand(message.data);
-        break;
-      case 255: // SYSEX
-        const sysID = message.data.readInt16BE(0);
-        if (sysID === 1) { // Fadecandy
-          const sysExID = message.data.readInt16BE(2);
-          if (sysExID === 1) { // Set Global Color Correction.
-            const colorConfig = JSON.parse(message.data.slice(4).toString());
-            whitepoint = colorConfig.whitepoint;
+      case 0: // set-pixel-color
+        // TODO(proppy): implement channel 0 broadcast
+        if (!strands.has(message.channel)) {
+          console.warn("unknown OPC channel:", message.command);
+          return;
+        }
+        strands.set(message.channel, opcStrand(message.data));
+        // Display updated strands to the console.
+        for (const [c, strand] of strands) {
+          process.stdout.write(argv.char_start);
+          for (let i = 0; i < strand.length; i++) {
+            const pixel = strand.getPixel(i);
+            process.stdout.write(chalk.rgb(
+              pixel[0],
+              pixel[1],
+              pixel[2],
+            )(argv.char_led));
           }
+          process.stdout.write(argv.char_end);
+          process.stdout.write("\n");
         }
         break;
+      default:
+        console.warn("unsupport OPC command:", message.command);
+        return;
     }
-    // Display updated strand to the console.
-    process.stdout.write(argv.char_start);
-    for (let i = 0; i < strand.length; i++) {
-      const pixel = strand.getPixel(i);
-      process.stdout.write(chalk.rgb(
-        pixel[0] * whitepoint[0],
-        pixel[1] * whitepoint[1],
-        pixel[2] * whitepoint[2],
-      )(argv.char_led));
-    }
-    process.stdout.write(argv.char_end);
-    process.stdout.write("\n");
   });
 });
 server.on("listening", () => {

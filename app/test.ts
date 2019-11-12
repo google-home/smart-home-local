@@ -203,7 +203,9 @@ test("IDENTIFY handler", async (t) => {
         payload: {
           device: {
             radioTypes: [],
-            udpScanData: udpScanPayload.toString("hex"),
+            udpScanData: {
+              data: udpScanPayload.toString("hex"),
+            },
           },
           structureData: {},
           params: {},

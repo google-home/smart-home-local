@@ -41,7 +41,7 @@ export class HomeApp {
        throw Error(`identify request is missing discovery response: ${identifyRequest}`);
     }
     // Raw discovery data are encoded as 'hex'.
-    const udpScanData = Buffer.from(device.udpScanData, "hex");
+    const udpScanData = Buffer.from(device.udpScanData.data, "hex");
     console.debug("udpScanData:", udpScanData);
     // Device encoded discovery payload in CBOR.
     const discoveryData: IFakecandyData = await cbor.decodeFirst(udpScanData);

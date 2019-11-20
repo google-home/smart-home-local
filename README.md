@@ -1,6 +1,6 @@
 # Local Home SDK sample
 
-This sample shows how to integrate with the [Local Home SDK](https://developers.google.com/actions/smarthome/concepts/local). The Local Home SDK allow developers to add a local path to execute smart home intents by running TypeScript (or JavaScript) directly on Google Home smart speakers and Nest smart displays.
+This sample shows how to integrate with the [Local Home SDK](https://developers.google.com/assistant/smarthome/concepts/local). The Local Home SDK allow developers to add a local path to execute smart home intents by running TypeScript (or JavaScript) directly on Google Home smart speakers and Nest smart displays.
 
 ## Prerequisites
 

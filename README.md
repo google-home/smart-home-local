@@ -106,10 +106,10 @@ or deploy it to a publicly reacheable URL endpoint.
 ### Deploy locally
 
 - Start the local development server:
-```
-npm install --prefix app/
-npm start --prefix app/ -- --host 0.0.0.0
-```
+  ```
+  npm install --prefix app/
+  npm start --prefix app/ -- --host 0.0.0.0
+  ```
 Note: The local development server needs to listen on the same local network as
 the Home device in order to be able to load the Local Home SDK application.
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
@@ -134,6 +134,10 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
   [Chrome developer tools](https://developers.google.com/web/tools/chrome-devtools/).
 - Try the following query
   - `Set the light color to magenta`
+- It should display the light strand(s) in a colorful way:
+  ```
+  ◉◉◉◉◉◉◉◉◉◉◉◉◉◉◉◉
+  ```
 
 ## Test and Lint
 ```

@@ -49,17 +49,9 @@ const argv = yargs
     describe: "port to listen on for openpixelcontrol messages",
     default: 7890,
   })
-  .option("char_start", {
-    describe: "character to show before each strand leds",
-    default: "⚞",
-  })
-  .option("char_led", {
+  .option("led_char", {
     describe: "character to show for each strand leds",
     default: "◉",
-  })
-  .option("char_end", {
-    describe: "character to show after each strand leds",
-    default: "⚟",
   })
   .option("led_count", {
     describe: "number of leds per strands",
@@ -133,16 +125,14 @@ const server = net.createServer((conn) => {
         strands.set(message.channel, opcStrand(message.data));
         // Display updated strands to the console.
         for (const [c, strand] of strands) {
-          process.stdout.write(argv.char_start);
           for (let i = 0; i < strand.length; i++) {
             const pixel = strand.getPixel(i);
             process.stdout.write(chalk.rgb(
               pixel[0],
               pixel[1],
               pixel[2],
-            )(argv.char_led));
+            )(argv.led_char));
           }
-          process.stdout.write(argv.char_end);
           process.stdout.write("\n");
         }
         break;

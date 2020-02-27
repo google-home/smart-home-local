@@ -6,4 +6,4 @@ device/**.js
 device/**.js.map
 functions/**.js
 functions/**.js.map
-functions/firebase-debug.log
+firebase-debug.log

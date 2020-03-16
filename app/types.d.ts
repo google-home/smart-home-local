@@ -11,11 +11,10 @@
  * limitations under the License.
  */
 
+import {ControlKind} from '../common/discovery';
+
 export interface IColorAbsolute {
-  color: {
-    name: string;
-    spectrumRGB: number;
-  };
+  color: {name: string; spectrumRGB: number;};
 }
 
 export interface IDiscoveryData {
@@ -31,10 +30,10 @@ export interface ICustomData {
   leds: number;
   port: number;
   proxy: string;
+  control_protocol: ControlKind;
 }
 
 export interface IStrandInfo {
   channel: number;
   leds: number;
 }
-

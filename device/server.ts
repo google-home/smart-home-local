@@ -15,70 +15,111 @@
 // - prints led state on standard output.
 // - responds to UDP broadcast with device information encoded in CBOR
 
-import * as yargs from "yargs";
-const argv = yargs
-  .usage("Usage: $0 --udp_discovery_port PORT_NUMBER --udp_discovery_packet PACKET_STRING --device_id ID")
-  .option("udp_discovery_port", {
-    describe: "port to listen on for UDP discovery query",
-    type: "number",
-    demandOption: true,
-  })
-  .option("udp_discovery_packet", {
-    describe: "hex encoded packet content to match for UDP discovery query",
-    type: "string",
-    demandOption: true,
-  })
-  .option("device_id", {
-    describe: "device id to return in the UDP discovery response",
-    type: "string",
-    demandOption: true,
-  })
-  .option("device_model", {
-    describe: "device model to return in the UDP discovery response",
-    default: "fakecandy",
-  })
-  .option("hardware_revision", {
-    describe: "hardware revision to return in the UDP discovery response",
-    default: "evt-1",
-  })
-  .option("firmware_revision", {
-    describe: "firmware revision to return in the UDP discovery response",
-    default: "v1-beta",
-  })
-  .option("opc_port", {
-    describe: "port to listen on for openpixelcontrol messages",
-    default: 7890,
-  })
-  .option("led_char", {
-    describe: "character to show for each strand leds",
-    default: "◉",
-  })
-  .option("led_count", {
-    describe: "number of leds per strands",
-    default: 16,
-  })
-  .option("channel", {
-    describe: "add a new led strand with the corresponding channel number",
-    default: [1],
-    array: true,
-   })
-  .argv;
+import * as cbor from 'cbor';
+import chalk from 'chalk';
+import * as dgram from 'dgram';
+import * as http from 'http';
+import * as net from 'net';
+import * as upnp from 'node-ssdp';
+import * as os from 'os';
+import {Readable} from 'stream';
+import * as yargs from 'yargs';
 
-import * as cbor from "cbor";
-import * as dgram from "dgram";
+import {ControlKind, DiscoveryKind} from '../common/discovery';
 
-const socket = dgram.createSocket("udp4");
-// Handle discovery request.
-socket.on("message", (msg, rinfo) => {
-  const discoveryPacket = Buffer.from(argv.udp_discovery_packet, "hex");
-  if (msg.compare(discoveryPacket) !== 0) {
-    console.warn("received unknown payload:", msg, "from:", rinfo);
-    return;
-  }
-  console.debug("received discovery payload:", msg, "from:", rinfo);
-  // Reply to discovery request with device parameters encoded in CBOR.
-  // note: any encoding/properties could be used as long as the app-side can
-  // interpret the payload.
+import {IOPCMessage} from './types';
+
+const multicastDns = require('multicast-dns');
+const opcParser = require('opc/parser');
+const opcStrand = require('opc/strand');
+
+const argv =
+    yargs.usage('Usage: $0  --device_id ID [protocol settings]')
+        .option('discovery_protocol', {
+          describe: 'Discovery Protocol',
+          alias: 'd',
+          type: 'string',
+          demandOption: true,
+          default: DiscoveryKind.UDP,
+          choices: Object.values(DiscoveryKind),
+        })
+        .option('control_protocol', {
+          describe: 'Control Protocol',
+          alias: 'c',
+          type: 'string',
+          demandOption: true,
+          default: ControlKind.TCP,
+          choices: Object.values(ControlKind),
+        })
+        .option('mdns_service_name', {
+          describe: 'MDNS service name',
+          type: 'string',
+          default: '_sample._tcp.local',
+        })
+        .option('mdns_instance_name', {
+          describe: 'MDNS instance name.',
+          type: 'string',
+          default: 'strand1._sample._tcp.local',
+        })
+        .option('upnp_server_port', {
+          describe: 'Port to serve XML UPnP configuration by HTTP server',
+          type: 'number',
+          default: 8080,
+        })
+        .option('upnp_service_type', {
+          describe: 'UPnP service type',
+          type: 'string',
+          default: 'urn:sample:service:strand:1',
+        })
+        .option('udp_discovery_port', {
+          describe: 'port to listen on for UDP discovery query',
+          type: 'number',
+          default: 3311,
+        })
+        .option('udp_discovery_packet', {
+          describe:
+              'hex encoded packet content to match for UDP discovery query',
+          type: 'string',
+          default: 'A5A5A5A5',
+        })
+        .option('device_id', {
+          describe: 'device id to return in the discovery response',
+          type: 'string',
+          demandOption: true,
+        })
+        .option('device_model', {
+          describe: 'device model to return in the discovery response',
+          default: 'fakecandy',
+        })
+        .option('hardware_revision', {
+          describe: 'hardware revision to return in the discovery response',
+          default: 'evt-1',
+        })
+        .option('firmware_revision', {
+          describe: 'firmware revision to return in the discovery response',
+          default: 'v1-beta',
+        })
+        .option('opc_port', {
+          describe: 'port to listen on for openpixelcontrol messages',
+          default: 7890,
+        })
+        .option('led_char', {
+          describe: 'character to show for each strand leds',
+          default: '◉',
+        })
+        .option('led_count', {
+          describe: 'number of leds per strands',
+          default: 16,
+        })
+        .option('channel', {
+          describe:
+              'add a new led strand with the corresponding channel number',
+          default: [1],
+          array: true,
+        })
+        .argv;
+
+function makeDiscoveryData() {
   const discoveryData = {
     id: argv.device_id,
     model: argv.device_model,
@@ -86,62 +127,291 @@ socket.on("message", (msg, rinfo) => {
     fw_rev: argv.firmware_revision,
     channels: argv.channel,
   };
-  const responsePacket = cbor.encode(discoveryData);
-  socket.send(responsePacket, rinfo.port, rinfo.address, (error) => {
-    if (error !== null) {
-      console.error("failed to send ack:", error);
+  return discoveryData;
+}
+
+function startUdpDiscovery() {
+  const discoveryPacket = Buffer.from(argv.udp_discovery_packet, 'hex');
+  const socket = dgram.createSocket('udp4');
+  // Handle discovery request.
+  socket.on('message', (msg, rinfo) => {
+    if (msg.compare(discoveryPacket) !== 0) {
+      console.warn('UDP received unknown payload:', msg, 'from:', rinfo);
       return;
     }
-    console.debug("sent discovery response:", discoveryData, "to:", rinfo);
+    console.debug('UDP received discovery payload:', msg, 'from:', rinfo);
+    // Reply to discovery request with device parameters encoded in CBOR.
+    // note: any encoding/properties could be used as long as the app-side can
+    // interpret the payload.
+    const discoveryData = makeDiscoveryData();
+    const responsePacket = cbor.encode(discoveryData);
+    socket.send(responsePacket, rinfo.port, rinfo.address, (error) => {
+      if (error !== null) {
+        console.error('UDP failed to send ack:', error);
+        return;
+      }
+      console.debug(
+          'UDP sent discovery response:', responsePacket, 'to:', rinfo);
+    });
   });
-});
-socket.on("listening", () => {
-  console.log("discovery listening", socket.address());
-}).bind(argv.udp_discovery_port);
+  socket.on('listening', () => {
+    console.log('UDP discovery listening', socket.address());
+  });
+  socket.bind(argv.udp_discovery_port);
+}
 
-import chalk from "chalk";
-import * as net from "net";
-import {IOPCMessage} from "./types";
-const opcStream = require("opc");
-const opcParser = require("opc/parser");
-const opcStrand = require("opc/strand");
+function startMdnsDiscovery() {
+  const mdnsServer = multicastDns();
+  mdnsServer.on('query', (query: any) => {
+    console.debug(`Received mDNS Query ${query.questions[0].name}`);
+    if (!query.questions[0]) {
+      return;
+    }
+    if (query.questions[0].name === argv.mdns_service_name) {
+      const reply = {answers: mdnsMakeAnswers(cbor.encode)};
+      console.debug(
+          `Reply query with answer: ${JSON.stringify(reply, null, 2)}`);
+      mdnsServer.respond(reply);
+    }
+  });
+  console.log('mDNS discovery listening');
+
+  // self-testing mDNS.
+  mdnsServer.query({
+    questions: [
+      {
+        name: argv.mdns_service_name,
+        type: 'A',
+      },
+    ],
+  });
+}
+
+function mdnsMakeAnswers(encode: (input: any) => Buffer) {
+  const ttl = '300';
+
+  const discovery = encode(makeDiscoveryData()).toString('hex');
+  const answers = [
+    {
+      name: argv.mdns_service_name,
+      type: 'PTR',
+      ttl,
+      data: argv.mdns_instance_name,
+    },
+    {
+      name: argv.mdns_instance_name,
+      type: 'SRV',
+      ttl,
+      data: {
+        port: argv.opc_port,
+        weigth: 0,
+        priority: 0,
+        target: os.hostname(),
+      },
+    },
+    {
+      type: 'A',
+      ttl,
+      name: os.hostname(),
+      data: MyIp.getIp(),
+    },
+    {
+      type: 'TXT',
+      ttl,
+      name: argv.mdns_instance_name,
+      data: `discovery=${discovery}`,
+    },
+  ];
+  return answers;
+}
+
+function startUpnpDiscovery() {
+  upnpCreateHttpServer();
+  const upnpServer = new upnp.Server({
+    location: {
+      path: '/getJsonDiscoveryData',
+      port: argv.upnp_server_port,
+    },
+    udn: 'uuid:' + argv.device_id,
+  });
+  console.log(`UPNP server started.`);
+  upnpServer.addUSN('upnp:rootdevice');
+  upnpServer.addUSN(argv.upnp_service_type);
+  upnpServer.start();
+}
+
+// UPnP HTTP server should return XML with device description
+// in compliance with schemas-upnp-org. See
+// http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
+// Here we return JSON with device custom data instead.
+function upnpCreateHttpServer() {
+  const httpServer = http.createServer(
+      (req: http.IncomingMessage, res: http.ServerResponse) => {
+        console.debug(`UPNP HTTP: ${req.method} ${req.url}`);
+
+        if (req.method === 'GET' && req.url === '/getJsonDiscoveryData') {
+          const discoveryData = makeDiscoveryData();
+          console.debug(
+              `UPNP HTTP: response ${JSON.stringify(discoveryData, null, 2)}`);
+          res.end(JSON.stringify(discoveryData));
+        } else {
+          res.writeHead(400);
+          res.end(JSON.stringify({error: 'Unsupported request'}));
+        }
+      });
+  httpServer.listen(argv.upnp_server_port, () => {
+    console.log(` UPNP HTTP server listening on port ${argv.upnp_server_port}`);
+  });
+}
+
+export function startDiscovery() {
+  switch (argv.discovery_protocol) {
+    case DiscoveryKind.MDNS:
+      startMdnsDiscovery();
+      break;
+    case DiscoveryKind.UDP:
+      startUdpDiscovery();
+      break;
+    case DiscoveryKind.UPNP:
+      startUpnpDiscovery();
+      break;
+  }
+}
 
 // Default strands color is white.
 const strands = new Map(
-  argv.channel.map((c) => [c, opcStrand(Buffer.alloc(argv.led_count * 3).fill(0xff))]),
+    argv.channel.map(
+        (c) => [c, opcStrand(Buffer.alloc(argv.led_count * 3).fill(0xff))]),
 );
 
-// Handle OPC messages.
-const server = net.createServer((conn) => {
-  conn.pipe(opcParser()).on("data", (message: IOPCMessage) => {
-    console.debug("received command:", message.command, message.data);
-    switch (message.command) {
-      case 0: // set-pixel-color
-        // TODO(proppy): implement channel 0 broadcast
-        if (!strands.has(message.channel)) {
-          console.warn("unknown OPC channel:", message.command);
-          return;
+function startTcpControl() {
+  const server = net.createServer((conn) => {
+    conn.pipe(opcParser()).on('data', handleOpcMessage);
+  });
+  server.listen(argv.opc_port, () => {
+    console.log(`TCP control listening on port ${argv.opc_port}`);
+  });
+}
+
+function startHttpControl() {
+  const server = http.createServer(
+      (request: http.IncomingMessage, response: http.ServerResponse) => {
+        if (request.method === 'POST') {
+          let data = '';
+          request.on('data', (chunk: string) => {
+            data += chunk;
+          });
+          request.on('end', () => {
+            console.debug('HTTP: got', data);
+            const buf = Buffer.from(data, 'hex');
+            const readable = new Readable();
+            // tslint:disable-next-line: no-empty
+            readable._read = () => {};
+            readable.push(buf);
+            readable.pipe(opcParser()).on('data', handleOpcMessage);
+            response.end('Ok');
+          });
+        } else {
+          response.writeHead(405);
+          response.end(JSON.stringify(
+              {error: `Unsupported HTTP method: ${request.method}`}));
+          console.debug(
+              `HTTP: received ${request.method} request. Response status 405.`);
         }
-        strands.set(message.channel, opcStrand(message.data));
-        // Display updated strands to the console.
-        for (const [c, strand] of strands) {
-          for (let i = 0; i < strand.length; i++) {
-            const pixel = strand.getPixel(i);
-            process.stdout.write(chalk.rgb(
+      });
+  server.listen(argv.opc_port, () => {
+    console.log(`HTTP control listening on port ${argv.opc_port}`);
+  });
+}
+
+function startUdpControl() {
+  const server = dgram.createSocket('udp4');
+  server.on('message', (msg: Buffer, rinfo: dgram.RemoteInfo) => {
+    console.debug(`UDP: from ${rinfo.address} got`, msg);
+    // const buf = Buffer.from(msg.toString(), 'hex');
+    const readable = new Readable();
+    // tslint:disable-next-line: no-empty
+    readable._read = () => {};
+    readable.push(msg);
+    readable.pipe(opcParser()).on('data', handleOpcMessage);
+  });
+  server.on('listening', () => {
+    console.log(`UDP control listening on port ${argv.opc_port}`);
+  });
+  server.bind(argv.opc_port);
+}
+
+export function startControl() {
+  switch (argv.control_protocol) {
+    case ControlKind.HTTP:
+      startHttpControl();
+      break;
+    case ControlKind.TCP:
+      startTcpControl();
+      break;
+    case ControlKind.UDP:
+      startUdpControl();
+      break;
+  }
+}
+
+function handleOpcMessage(message: IOPCMessage) {
+  console.debug('received command:', message.command, message.data);
+  switch (message.command) {
+    case 0:  // set-pixel-color
+      // TODO(proppy): implement channel 0 broadcast
+      if (!strands.has(message.channel)) {
+        console.warn('unknown OPC channel:', message.command);
+        return;
+      }
+      strands.set(message.channel, opcStrand(message.data));
+      // Display updated strands to the console.
+      for (const [c, strand] of strands) {
+        for (let i = 0; i < strand.length; i++) {
+          const pixel = strand.getPixel(i);
+          process.stdout.write(chalk.rgb(
               pixel[0],
               pixel[1],
               pixel[2],
-            )(argv.led_char));
-          }
-          process.stdout.write("\n");
+              )(argv.led_char));
         }
-        break;
-      default:
-        console.warn("unsupport OPC command:", message.command);
-        return;
+        process.stdout.write('\n');
+      }
+      break;
+    default:
+      console.warn('Unsupported OPC command:', message.command);
+      return;
+  }
+}
+
+// Gets IP address of a host.
+class MyIp {
+  public static getIp() {
+    if (MyIp.lookupDone) {
+      return MyIp.myIp;
     }
-  });
-});
-server.on("listening", () => {
-  console.log("opc listening", server.address());
-}).listen(argv.opc_port);
+    MyIp.myIp = MyIp.findMyIp();
+    MyIp.lookupDone = true;
+    return MyIp.myIp;
+  }
+
+  private static myIp?: string;
+  private static lookupDone = false;
+
+  private static findMyIp() {
+    const results: string[] = [];
+    for (const [ifc, infos] of Object.entries(os.networkInterfaces())) {
+      if (ifc === 'lo0') {
+        continue;
+      }
+      for (const info of infos) {
+        if (info.family === 'IPv4') {
+          results.push(info.address);
+        }
+      }
+    }
+    return results.length > 0 ? results[0] : undefined;
+  }
+
+  private constructor() {}
+}

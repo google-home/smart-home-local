@@ -13,13 +13,13 @@
 
 /// <reference types="@google/local-home-sdk" />
 
-import test from "ava";
+import test from 'ava';
 
-import { HomeApp } from "./app";
-import { IColorAbsolute, IDiscoveryData } from "./types";
+import {HomeApp} from './app';
+import {IColorAbsolute, IDiscoveryData} from './types';
 
 // TODO(proppy): add typings
-const cbor = require("cbor");
+const cbor = require('cbor');
 
 function smarthomeDeviceManagerStub(deviceId: string, error?: any) {
   const DeviceManager = class {
@@ -43,34 +43,43 @@ function smarthomeAppStub(deviceManager?: any) {
     constructor(version: string) {
       this.version = version;
     }
-    public getDeviceManager() { return deviceManager; }
-    public listen() { return Promise.resolve(); }
-    public onExecute() { return this; }
-    public onIdentify() { return this; }
-    public onReachableDevices() { return this; }
+    public getDeviceManager() {
+      return deviceManager;
+    }
+    public listen() {
+      return Promise.resolve();
+    }
+    public onExecute() {
+      return this;
+    }
+    public onIdentify() {
+      return this;
+    }
+    public onReachableDevices() {
+      return this;
+    }
   };
-  return new App("test-version");
+  return new App('test-version');
 }
 
 test.before((t) => {
   (global as any).smarthome = {
     Intents: {
-      IDENTIFY: "action.devices.IDENTIFY",
-      EXECUTE: "action.devices.EXECUTE",
+      IDENTIFY: 'action.devices.IDENTIFY',
+      EXECUTE: 'action.devices.EXECUTE',
     },
     DataFlow: {
-      TcpRequestData: class {
-      },
+      TcpRequestData: class {},
     },
     Constants: {
       TcpOperation: {
-        WRITE: "WRITE",
+        WRITE: 'WRITE',
       },
     },
     Execute: {
       Response: {
         Builder: class {
-          private requestId: string = "";
+          private requestId: string = '';
           private commands: smarthome.IntentFlow.ExecuteResponseCommands[] = [];
           public setRequestId(requestId: string) {
             this.requestId = requestId;
@@ -79,14 +88,14 @@ test.before((t) => {
           public setSuccessState(deviceId: string, state: object) {
             this.commands.push({
               ids: [deviceId],
-              status: "SUCCESS",
+              status: 'SUCCESS',
               states: state,
             });
           }
           public setErrorState(deviceId: string, errorCode: string) {
             this.commands.push({
               ids: [deviceId],
-              status: "ERROR",
+              status: 'ERROR',
               errorCode,
             });
           }
@@ -106,18 +115,18 @@ test.before((t) => {
 });
 
 // TODO(proppy): add IDENTIFY hub test
-test("IDENTIFY handler", async (t) => {
+test('IDENTIFY handler', async (t) => {
   const app = new HomeApp(smarthomeAppStub());
   const deviceData: IDiscoveryData = {
-    id: "device-local-id",
-    model: "device-mode",
-    hw_rev: "hw-rev",
-    fw_rev: "fw-rev",
+    id: 'device-local-id',
+    model: 'device-mode',
+    hw_rev: 'hw-rev',
+    fw_rev: 'fw-rev',
     channels: [1],
   };
   const udpScanPayload = cbor.encode(deviceData);
   const identifyResponse = await app.identifyHandler({
-    requestId: "request-id",
+    requestId: 'request-id',
     inputs: [
       {
         intent: smarthome.Intents.IDENTIFY,
@@ -125,7 +134,7 @@ test("IDENTIFY handler", async (t) => {
           device: {
             radioTypes: [],
             udpScanData: {
-              data: udpScanPayload.toString("hex"),
+              data: udpScanPayload.toString('hex'),
             },
           },
           structureData: {},
@@ -135,18 +144,17 @@ test("IDENTIFY handler", async (t) => {
     ],
     devices: [],
   });
-  t.is(identifyResponse.payload.device.verificationId,
-       deviceData.id);
+  t.is(identifyResponse.payload.device.verificationId, deviceData.id);
 });
 
 // TODO(proppy): add REACHEABLE_DEVICES hub test
 // TODO(proppy): add EXECUTE hub test
-test("EXECUTE handler ColorAbsolute", async (t) => {
-  const deviceId = "device-id";
-  const command = "action.devices.commands.ColorAbsolute";
+test('EXECUTE handler ColorAbsolute', async (t) => {
+  const deviceId = 'device-id';
+  const command = 'action.devices.commands.ColorAbsolute';
   const params = {
     color: {
-      name: "magenta",
+      name: 'magenta',
       spectrumRGB: 0xff00ff,
     },
   };
@@ -154,7 +162,7 @@ test("EXECUTE handler ColorAbsolute", async (t) => {
   const smarthomeApp = smarthomeAppStub(deviceManager);
   const app = new HomeApp(smarthomeApp);
   const executeResponse = await app.executeHandler({
-    requestId: "request-id",
+    requestId: 'request-id',
     inputs: [
       {
         intent: smarthome.Intents.EXECUTE,
@@ -169,6 +177,7 @@ test("EXECUTE handler ColorAbsolute", async (t) => {
               customData: {
                 channel: 1,
                 leds: 8,
+                control_protocol: 'TCP',
               },
             }],
           }],
@@ -178,33 +187,34 @@ test("EXECUTE handler ColorAbsolute", async (t) => {
     ],
   });
   t.deepEqual(executeResponse.payload.commands, [{
-    ids: [deviceId],
-    status: "SUCCESS",
-    states: {
-      ...params,
-      online: true,
-    },
-  }]);
+                ids: [deviceId],
+                status: 'SUCCESS',
+                states: {
+                  ...params,
+                  online: true,
+                },
+              }]);
   t.is(deviceManager.commands.length, 1);
   t.is(deviceManager.commands[0].deviceId, deviceId);
-  t.is(deviceManager.commands[0].operation, "WRITE");
+  t.is(deviceManager.commands[0].operation, 'WRITE');
   t.snapshot(deviceManager.commands[0].data);
 });
 
-test("EXECUTE handler failure", async (t) => {
-  const deviceId = "device-id";
-  const command = "action.devices.commands.ColorAbsolute";
+test('EXECUTE handler failure', async (t) => {
+  const deviceId = 'device-id';
+  const command = 'action.devices.commands.ColorAbsolute';
   const params = {
     color: {
-      name: "magenta",
+      name: 'magenta',
       spectrumRGB: 0xff00ff,
     },
   };
-  const deviceManager = smarthomeDeviceManagerStub(deviceId, {errorCode: "some-error"});
+  const deviceManager =
+      smarthomeDeviceManagerStub(deviceId, {errorCode: 'some-error'});
   const smarthomeApp = smarthomeAppStub(deviceManager);
   const app = new HomeApp(smarthomeApp);
   const executeResponse = await app.executeHandler({
-    requestId: "request-id",
+    requestId: 'request-id',
     inputs: [
       {
         intent: smarthome.Intents.EXECUTE,
@@ -219,6 +229,7 @@ test("EXECUTE handler failure", async (t) => {
               customData: {
                 channel: 1,
                 leds: 8,
+                control_protocol: 'TCP',
               },
             }],
           }],
@@ -228,9 +239,9 @@ test("EXECUTE handler failure", async (t) => {
     ],
   });
   t.deepEqual(executeResponse.payload.commands, [{
-    ids: [deviceId],
-    status: "ERROR",
-    errorCode: "some-error",
-  }]);
+                ids: [deviceId],
+                status: 'ERROR',
+                errorCode: 'some-error',
+              }]);
   t.is(deviceManager.commands.length, 0);
 });

@@ -1,4 +1,4 @@
-# Local Home SDK sample
+# Local Home SDK Sample
 
 This sample shows how to integrate with the
 [Local Home SDK](https://developers.google.com/assistant/smarthome/concepts/local).

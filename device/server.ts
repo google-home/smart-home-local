@@ -18,6 +18,7 @@
 import * as cbor from 'cbor';
 import chalk from 'chalk';
 import * as dgram from 'dgram';
+import express from 'express';
 import * as http from 'http';
 import * as net from 'net';
 import * as upnp from 'node-ssdp';
@@ -251,31 +252,23 @@ function startTcpControl() {
 }
 
 function startHttpControl() {
-  const server = http.createServer(
-      (request: http.IncomingMessage, response: http.ServerResponse) => {
-        if (request.method === 'POST') {
-          let data = '';
-          request.on('data', (chunk: string) => {
-            data += chunk;
-          });
-          request.on('end', () => {
-            console.debug('HTTP: got', data);
-            const buf = Buffer.from(data, 'hex');
-            const readable = new Readable();
-            // tslint:disable-next-line: no-empty
-            readable._read = () => {};
-            readable.push(buf);
-            readable.pipe(opcParser()).on('data', handleOpcMessage);
-            response.end('Ok');
-          });
-        } else {
-          response.writeHead(405);
-          response.end(JSON.stringify(
-              {error: `Unsupported HTTP method: ${request.method}`}));
-          console.debug(
-              `HTTP: received ${request.method} request. Response status 405.`);
-        }
-      });
+  const server = express();
+  server.use(express.text({
+    type: 'application/octet-stream',
+  }));
+  server.post('/', (req, res) => {
+    console.debug(`HTTP: received ${req.method} request.`);
+
+    const buf = Buffer.from(req.body, 'base64');
+    const readable = new Readable();
+    // tslint:disable-next-line: no-empty
+    readable._read = () => {};
+    readable.push(buf);
+    readable.pipe(opcParser()).on('data', handleOpcMessage);
+
+    res.status(200).send('OK');
+  });
+
   server.listen(argv.opc_port, () => {
     console.log(`HTTP control listening on port ${argv.opc_port}`);
   });
@@ -285,7 +278,7 @@ function startUdpControl() {
   const server = dgram.createSocket('udp4');
   server.on('message', (msg: Buffer, rinfo: dgram.RemoteInfo) => {
     console.debug(`UDP: from ${rinfo.address} got`, msg);
-    // const buf = Buffer.from(msg.toString(), 'hex');
+
     const readable = new Readable();
     // tslint:disable-next-line: no-empty
     readable._read = () => {};

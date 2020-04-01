@@ -77,7 +77,7 @@ function makeHttpGet(path?: string) {
 function makeHttpPost(buf: Buffer, path?: string) {
   const command = new smarthome.DataFlow.HttpRequestData();
   command.method = smarthome.Constants.HttpOperation.POST;
-  command.data = buf.toString('hex');
+  command.data = buf.toString('base64');
   command.dataType = 'application/octet-stream';
   if (path !== undefined) {
     command.path = path;

@@ -21,7 +21,6 @@ import * as dgram from 'dgram';
 import * as http from 'http';
 import * as net from 'net';
 import * as upnp from 'node-ssdp';
-import * as os from 'os';
 import {Readable} from 'stream';
 import * as yargs from 'yargs';
 
@@ -29,7 +28,8 @@ import {ControlKind, DiscoveryKind} from '../common/discovery';
 
 import {IOPCMessage} from './types';
 
-const multicastDns = require('multicast-dns');
+const bonjour = require('bonjour');
+const mdnsParser = require('multicast-dns-service-types');
 const opcParser = require('opc/parser');
 const opcStrand = require('opc/strand');
 
@@ -161,68 +161,25 @@ function startUdpDiscovery() {
 }
 
 function startMdnsDiscovery() {
-  const mdnsServer = multicastDns();
-  mdnsServer.on('query', (query: any) => {
-    console.debug(`Received mDNS Query ${query.questions[0].name}`);
-    if (!query.questions[0]) {
-      return;
-    }
+  // Validate and parse the input string
+  const serviceParts = mdnsParser.parse(argv.mdns_service_name);
+  // Publish the DNS-SD service
+  const mdnsServer = bonjour();
+  mdnsServer.publish({
+    name: argv.device_id,
+    type: serviceParts.name,
+    protocol: serviceParts.protocol,
+    port: 5353,
+    txt: makeDiscoveryData(),
+  });
+  // Log query events from internal mDNS server
+  mdnsServer._server.mdns.on('query', (query: any) => {
     if (query.questions[0].name === argv.mdns_service_name) {
-      const reply = {answers: mdnsMakeAnswers(cbor.encode)};
-      console.debug(
-          `Reply query with answer: ${JSON.stringify(reply, null, 2)}`);
-      mdnsServer.respond(reply);
+      console.debug(`Received mDNS query for ${argv.mdns_service_name}`);
     }
   });
-  console.log('mDNS discovery listening');
 
-  // self-testing mDNS.
-  mdnsServer.query({
-    questions: [
-      {
-        name: argv.mdns_service_name,
-        type: 'A',
-      },
-    ],
-  });
-}
-
-function mdnsMakeAnswers(encode: (input: any) => Buffer) {
-  const ttl = '300';
-
-  const discovery = encode(makeDiscoveryData()).toString('hex');
-  const answers = [
-    {
-      name: argv.mdns_service_name,
-      type: 'PTR',
-      ttl,
-      data: argv.mdns_instance_name,
-    },
-    {
-      name: argv.mdns_instance_name,
-      type: 'SRV',
-      ttl,
-      data: {
-        port: argv.opc_port,
-        weigth: 0,
-        priority: 0,
-        target: os.hostname(),
-      },
-    },
-    {
-      type: 'A',
-      ttl,
-      name: os.hostname(),
-      data: MyIp.getIp(),
-    },
-    {
-      type: 'TXT',
-      ttl,
-      name: argv.mdns_instance_name,
-      data: `discovery=${discovery}`,
-    },
-  ];
-  return answers;
+  console.log(`mDNS discovery advertising ${argv.mdns_service_name}`);
 }
 
 function startUpnpDiscovery() {
@@ -382,36 +339,4 @@ function handleOpcMessage(message: IOPCMessage) {
       console.warn('Unsupported OPC command:', message.command);
       return;
   }
-}
-
-// Gets IP address of a host.
-class MyIp {
-  public static getIp() {
-    if (MyIp.lookupDone) {
-      return MyIp.myIp;
-    }
-    MyIp.myIp = MyIp.findMyIp();
-    MyIp.lookupDone = true;
-    return MyIp.myIp;
-  }
-
-  private static myIp?: string;
-  private static lookupDone = false;
-
-  private static findMyIp() {
-    const results: string[] = [];
-    for (const [ifc, infos] of Object.entries(os.networkInterfaces())) {
-      if (ifc === 'lo0') {
-        continue;
-      }
-      for (const info of infos) {
-        if (info.family === 'IPv4') {
-          results.push(info.address);
-        }
-      }
-    }
-    return results.length > 0 ? results[0] : undefined;
-  }
-
-  private constructor() {}
 }

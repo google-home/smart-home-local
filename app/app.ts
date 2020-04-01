@@ -228,7 +228,15 @@ export class HomeApp {
 
     } else if (device.mdnsScanData !== undefined) {
       const scanData = device.mdnsScanData as smarthome.IntentFlow.MdnsScanData;
-      return cbor.decodeFirst(Buffer.from(scanData.txt.discovery, 'hex'));
+      return {
+        id: scanData.txt.id,
+        model: scanData.txt.model,
+        hw_rev: scanData.txt.hw_rev,
+        fw_rev: scanData.txt.fw_rev,
+        channels: scanData.txt.channels
+          .split(',')
+          .map((channel) => parseInt(channel, 10)),
+      };
 
     } else if (device.upnpScanData !== undefined) {
       const scanData = device.upnpScanData as smarthome.IntentFlow.UpnpScanData;

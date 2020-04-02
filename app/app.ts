@@ -17,6 +17,8 @@ import {ControlKind} from '../common/discovery';
 
 import {IColorAbsolute, ICustomData, IDiscoveryData} from './types';
 
+import {DOMParser} from 'xmldom';
+
 // TODO(proppy): add typings
 const cbor = require('cbor');
 const opcStream = require('opc');
@@ -112,8 +114,8 @@ export class HomeApp {
               deviceInfo: {
                 manufacturer: 'fakecandy corp',
                 model: discoveryData.model,
-                hwVersion: discoveryData.hw_rev,
-                swVersion: discoveryData.fw_rev,
+                hwVersion: discoveryData.hw_rev || '',
+                swVersion: discoveryData.fw_rev || '',
               },
               ...((discoveryData.channels.length > 1) ?
                       {id: discoveryData.id, isProxy: true, isLocalOnly: true} :
@@ -223,10 +225,10 @@ export class HomeApp {
       device: smarthome.IntentFlow.LocalIdentifiedDevice,
       requestId: string,
       ): Promise<IDiscoveryData> => {
-    if (device.udpScanData !== undefined) {
+    if (device.udpScanData !== undefined) { // UDP discovery
       return cbor.decodeFirst(Buffer.from(device.udpScanData.data, 'hex'));
 
-    } else if (device.mdnsScanData !== undefined) {
+    } else if (device.mdnsScanData !== undefined) { // mDNS discovery
       const scanData = device.mdnsScanData as smarthome.IntentFlow.MdnsScanData;
       return {
         id: scanData.txt.id,
@@ -238,22 +240,47 @@ export class HomeApp {
           .map((channel) => parseInt(channel, 10)),
       };
 
-    } else if (device.upnpScanData !== undefined) {
+    } else if (device.upnpScanData !== undefined) { // UPnP discovery
       const scanData = device.upnpScanData as smarthome.IntentFlow.UpnpScanData;
-
+      // Request and parse XML device description
       const deviceCommand = makeHttpGet(scanData.location);
       deviceCommand.requestId = requestId;
       deviceCommand.deviceId = '';
       deviceCommand.port = scanData.port;
 
-      console.debug(`UPnP HTTP command: `, deviceCommand);
+      console.debug('UPnP HTTP command: ', deviceCommand);
       try {
+        // Request the XML device description
         const httpResponseData =
-            await this.app.getDeviceManager().send(deviceCommand) as
-            smarthome.DataFlow.HttpResponseData;
-        return JSON.parse(httpResponseData.httpResponse.body as string);
+          await this.app.getDeviceManager().send(deviceCommand) as
+          smarthome.DataFlow.HttpResponseData;
+        const xmlResponse = httpResponseData.httpResponse.body as string;
+        console.log('XML device description', xmlResponse);
+        const deviceDescription = new DOMParser()
+          .parseFromString(xmlResponse, 'text/xml');
+
+        // Parse UPnP type strings
+        const deviceElement = deviceDescription.getElementsByTagName('device')[0];
+        const deviceId = deviceElement.getElementsByTagName('UDN')[0]
+          .textContent?.match(/uuid:([a-zA-Z0-9]+)/)?.[1] || '';
+        const deviceModel = deviceElement.getElementsByTagName('modelName')[0]
+          .textContent || '';
+
+        const serviceElements = deviceElement.getElementsByTagName('service');
+        const channelList = Array.from(serviceElements).map((service) => {
+          const channel = service.getElementsByTagName('serviceId')[0]
+            .textContent?.match(/urn:sample:serviceId:strand-([0-9]+)/);
+          return channel ? parseInt(channel[1], 10) : 0;
+        });
+
+        const discoveryData: IDiscoveryData = {
+          id: deviceId,
+          model: deviceModel,
+          channels: channelList,
+        };
+        return discoveryData;
       } catch (e) {
-        console.log('UPNP HTTP: error', e);
+        console.log('UPnP HTTP error: ', e);
       }
     }
     throw Error(

@@ -19,10 +19,10 @@ import * as cbor from 'cbor';
 import chalk from 'chalk';
 import * as dgram from 'dgram';
 import express from 'express';
-import * as http from 'http';
 import * as net from 'net';
 import * as upnp from 'node-ssdp';
 import {Readable} from 'stream';
+import * as xmlBuilder from 'xmlbuilder2';
 import * as yargs from 'yargs';
 
 import {ControlKind, DiscoveryKind} from '../common/discovery';
@@ -71,6 +71,11 @@ const argv =
           describe: 'UPnP service type',
           type: 'string',
           default: 'urn:sample:service:strand:1',
+        })
+        .option('upnp_device_type', {
+          describe: 'UPnP device type',
+          type: 'string',
+          default: 'urn:sample:device:strand:1',
         })
         .option('udp_discovery_port', {
           describe: 'port to listen on for UDP discovery query',
@@ -184,42 +189,66 @@ function startMdnsDiscovery() {
 }
 
 function startUpnpDiscovery() {
-  upnpCreateHttpServer();
+  const descriptionPath = '/device.xml';
+
+  // HTTP server to response to description requests
+  const server = express();
+  server.get(descriptionPath, (req, res) => {
+    console.debug(`UPnP: received device description request.`);
+
+    const deviceDescription = upnpCreateXmlDescription();
+    res.status(200).send(deviceDescription);
+  });
+  server.listen(argv.upnp_server_port, () => {
+    console.log(`UPnP: HTTP server listening on port ${argv.upnp_server_port}`);
+  });
+
+  // Start the UPnP advertisements
   const upnpServer = new upnp.Server({
     location: {
-      path: '/getJsonDiscoveryData',
+      path: descriptionPath,
       port: argv.upnp_server_port,
     },
-    udn: 'uuid:' + argv.device_id,
+    udn: `uuid:${argv.device_id}`,
   });
-  console.log(`UPNP server started.`);
   upnpServer.addUSN('upnp:rootdevice');
+  upnpServer.addUSN(argv.upnp_device_type);
   upnpServer.addUSN(argv.upnp_service_type);
   upnpServer.start();
+
+  console.log(`UPnP discovery advertising ${argv.upnp_service_type}`);
 }
 
 // UPnP HTTP server should return XML with device description
 // in compliance with schemas-upnp-org. See
-// http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.0.pdf
-// Here we return JSON with device custom data instead.
-function upnpCreateHttpServer() {
-  const httpServer = http.createServer(
-      (req: http.IncomingMessage, res: http.ServerResponse) => {
-        console.debug(`UPNP HTTP: ${req.method} ${req.url}`);
+// http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf
+function upnpCreateXmlDescription() {
+  const description = {
+    root: {
+      '@xmlns': 'urn:schemas-upnp-org:device-1-0',
+      'specVersion': {
+        major: '1',
+        minor: '1',
+      },
+      'device': {
+        deviceType: argv.upnp_device_type,
+        friendlyName: 'Virtual Light Device',
+        UDN: `uuid:${argv.device_id}`,
+        modelName: argv.device_model,
+        serviceList: {
+          service: argv.channel.map((channel) => {
+            return {
+              serviceType: argv.upnp_service_type,
+              serviceId: `urn:sample:serviceId:strand-${channel}`,
+            };
+          }),
+        },
+      },
+    },
+  };
 
-        if (req.method === 'GET' && req.url === '/getJsonDiscoveryData') {
-          const discoveryData = makeDiscoveryData();
-          console.debug(
-              `UPNP HTTP: response ${JSON.stringify(discoveryData, null, 2)}`);
-          res.end(JSON.stringify(discoveryData));
-        } else {
-          res.writeHead(400);
-          res.end(JSON.stringify({error: 'Unsupported request'}));
-        }
-      });
-  httpServer.listen(argv.upnp_server_port, () => {
-    console.log(` UPNP HTTP server listening on port ${argv.upnp_server_port}`);
-  });
+  return xmlBuilder.create(description)
+      .end({ prettyPrint: true });
 }
 
 export function startDiscovery() {

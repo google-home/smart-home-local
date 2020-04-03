@@ -1,20 +1,21 @@
 # Local Home SDK Sample
 
-This sample shows how to integrate with the
+This sample demonstrates integrating a smart home Action with the
 [Local Home SDK](https://developers.google.com/assistant/smarthome/concepts/local).
-The Local Home SDK allow developers to add a local path to execute smart home
+The Local Home SDK allow developers to add a local path to handle smart home
 intents by running TypeScript (or JavaScript) directly on Google Home smart speakers
 and Nest smart displays.
-The sample could be configured to use one of the following protocols for virtual
-device discovery: **UDP**, **MDNS** or **UPNP**. To control a discovered virtual
-device for a local execution, sample could be configured to use one of **TCP**,
-**HTTP** or **UDP** protocols.
+The sample supports the following protocols along with the companion
+[virtual device](device/README.md):
+- **Device Discovery:** UDP, mDNS or UPnP
+- **Control:** UDP, TCP, or HTTP
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) LTS 10.16.0+
+- [Firebase CLI](https://firebase.google.com/docs/cli)
 
-## Configure the smart home project
+## Configure the Actions project
 
 - Create a new _Smart Home_ project in the [Actions console](https://console.actions.google.com/)
 - Deploy the placeholder smart home provider to _Cloud Functions for Firebase_
@@ -34,154 +35,136 @@ device for a local execution, sample could be configured to use one of **TCP**,
   - **Authorization URL**: `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/authorize`
   - **Token URL**: `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/token`
 
-### Configure a discovery protocol
+### Select a discovery protocol
 
-- Discovery protocol and its attributes are configured in _Build > Actions > Smart home > Actions_
-  in the `Device Scan Configuration`.
-- To configure **UDP** as a discovery protocol, set only the following attributes
-  in the `Device Scan Configuration` and remove other attributes if set:
-  - **UDP discovery address**: `255.255.255.255`
-  - **UDP discovery port in**: `3312`
-  - **UDP discovery port out**: `3311`
-  - **UDP discovery packet**: `A5A5A5A5`
-- To configure **MDNS** as a discovery protocol, set only the following attributes
-  in the `Device Scan Configuration` and remove other attributes if set:
-  - **MDNS service name**: `_sample._tcp.local`
-  - **Name**: `.*\._sample\._tcp\.local`
-- To configure **UPNP** as a discovery protocol, set only the following attribute
-  in the `Device Scan Configuration` and remove other attributes if set:
-  - **UPNP service type**: `urn:sample:service:light:1`
+Choose one of the supported the discovery protocols that you would like to test,
+and enter its attributes in the Actions console at
+_Develop > Actions > Configure local home SDK_ under **Device Scan Configuration**.
+
+> Note: These are the default values used by the [virtual device](device/README.md)
+> for discovery. If you choose to use different values, you will need to supply
+> those parameters when you [set up the virtual device](#set-up-the-virtual-device).
+
+#### UDP
+- **UDP discovery address**: `255.255.255.255`
+- **UDP discovery port in**: `3312`
+- **UDP discovery port out**: `3311`
+- **UDP discovery packet**: `A5A5A5A5`
+
+#### mDNS
+- **mDNS service name**: `_sample._tcp.local`
+- **Name**: `.*\._sample\._tcp\.local`
+
+  > Note: The **Name** attribute value is a regular expression.
+
+#### UPnP
+- **UPNP service type**: `urn:sample:service:light:1`
+
+### Select a control protocol
+
+Choose one of the supported control protocols that you would like to test.
+You will use this value to configure both the cloud fulfillment and the virtual
+device.
+
+- `UDP`: Send execution commands to the target device as a UDP payload.
+- `TCP`: Send execution commands to the target device as a TCP payload.
+- `HTTP`: Send execution commands to the target device as an HTTP request.
+
+### Choose a device type
+
+The local fulfillment sample supports running as a **single end device** or a
+**hub/proxy device**. This is determined by the number of channels you configure.
+A device with more than one channel will be treated as a hub by the local
+fulfillment sample code.
+
+## Set up cloud fulfillment
+
+Configure the cloud service to report the correct device `SYNC` metadata based on your
+chosen device type and control protocol. Here are some examples for configuring the service for different use cases:
+
+- Report a single device (`strand1`) controlled via UDP commands:
+  ```
+  npm run firebase --prefix functions/ -- functions:config:set \
+      strand1.leds=16 strand1.channel=1 \
+      strand1.control_protocol=UDP
+  npm run deploy --prefix functions/
+  ```
+
+- Report three individual light strands connected through a proxy (`hub1`) and
+  controlled via TCP commands:
+  ```
+  npm run firebase --prefix functions/ -- functions:config:set \
+      hub1.leds=16 hub1.channel=1,2,3 \
+      hub1.control_protocol=TCP
+  npm run deploy --prefix functions/
+  ```
+
+After you have deployed the cloud configuration, trigger a new `SYNC` request from
+Google Assistant by unlinking and re-adding the placeholder smart home provider in
+the _Google Home app_.
 
 ## Set up the virtual device
 
-- Virtual device discovery settings should match settings in
-  `Device Scan Configuration` in _Build > Actions > Smart home > Actions_
-  - Virtual device should use the same discovery protocol as in
-    `Device Scan Configuration`
-- Virtual device control protocol should match control_protocol used for
-  `functions:config:set` in `npm run firebase` command.
+The companion [virtual device](device/README.md) is a Node.js app that emulates
+strands of RGB LEDs controllable using the
+[Open Pixel Control](http://openpixelcontrol.org/) protocol and displays the results
+to the terminal in a colorful way.
 
-### Start as a single end device
+- Virtual device discovery settings must match the attributes provided in
+  **Device Scan Configuration** in _Develop > Actions > Configure local home SDK_.
+  - If you modify the attributes in your **Device Scan Configuration**, you must
+    configure the virtual device accordingly.
+    See the [virtual device README](device/README.md) for more details on
+    configuring the discovery attributes.
+- Virtual device control protocol should match `control_protocol` used with
+  `functions:config:set` when setting up cloud fulfillment.
+- Configure the device type as **end device** or **hub/proxy** based on the number
+  of `--channel` parameters provided. A device with more than one channel will be
+  treated as a hub.
 
-- Configure the cloud service to report a single device (`strand1`) in the
-  `SYNC` response:
-  ```
-  npm run firebase --prefix functions/ -- functions:config:set \
-      strand1.leds=16 strand1.channel=1 strand1.control_protocol=UDP
-  npm run deploy --prefix functions/
-  ```
-- Trigger a `SYNC` request by unlinking and re-adding the placeholder smarthome
-  provider in the _Google Home app_.
-- Start the virtual light strip with a single strand of 16 pixels:
+> Note: The virtual device needs to listen on the same local network as the Home device.
+
+Here are some examples for configuring the virtual device for different use cases:
+
+- Start the virtual device as a single device (`strand1`) discovered via
+  UDP broadcast and controlled with TCP commands:
   ```
   npm install --prefix device/
   npm start --prefix device/ -- \
       --device_id strand1 \
       --discovery_protocol UDP \
-      --udp_discovery_port 3311 \
-      --udp_discovery_packet A5A5A5A5 \
       --control_protocol TCP \
       --channel 1
   ```
 
-This starts a local device server that:
-
-- replies to UDP discovery packets on port `3311` with device metadata
-- receives device controlling commands with TCP on port `7890`
-- handles OPC set 8-bit pixel packet on channel 0
-- displays OPC pixels to the terminal in a colorful way
-
-Note: The server needs to listen on the same local network as the Home device.
-
-### Start as a hub device
-
-- Configure the cloud service to report 3 individual light strances connected
-  through a proxy (`hub1`):
-  ```
-  npm run firebase --prefix functions/ -- functions:config:set \
-      hub1.leds=16 hub1.channel=1,2,3 hub1.control_protocol=UDP
-  npm run deploy --prefix functions/
-  ```
-- Trigger a `SYNC` request by unlinking and re-adding the placeholder smarthome
-  provider in the _Google Home app_.
-- Start the virtual light hub with 3 individual strands:
+- Start the virtual device as a hub (`hub1`) discovered via mDNS and controlling
+  three individual strands with HTTP commands:
   ```
   npm install --prefix device/
   npm start --prefix device/ -- \
       --device_id hub1 \
-      --discovery_protocol UDP \
-      --udp_discovery_port 3311 \
-      --udp_discovery_packet A5A5A5A5 \
-      --control_protocol TCP \
+      --discovery_protocol MDNS \
+      --control_protocol HTTP \
       --channel 1 \
       --channel 2 \
       --channel 3
   ```
 
-This starts a local device server that:
+- Start the virtual device as a single device (`strand1`) discovered via
+  UPnP with a custom advertisement and controlled with TCP commands:
+  ```
+  npm install --prefix device/
+  npm start --prefix device/ -- \
+      --device_id strand1 \
+      --discovery_protocol UPNP \
+      --upnp_device_type urn:schemas-upnp-org:device:BinaryLight:1 \
+      --upnp_service_type urn:schemas-upnp-org:service:SwitchPower:1 \
+      --control_protocol TCP \
+      --channel 1
+  ```
 
-- replies to UDP discovery packets on port `3311` with proxy device metadata
-- receives device controlling commands with TCP on port `7890`
-- handles OPC set 8-bit pixel packet on channel 1 and 2 and 3
-- displays the 3 strands to the terminal in a colorful way
-
-Note: The server needs to listen on the same local network as the Home device.
-
-### View and adjust cloud service and virtual device configuration
-
-Commands above use UDP discovery aand TCP control protocol. Other protocols
-are available. To select different discovery or control protocol, adjust
-configuration for the cloud service and change command line parameters for
-device.
-
-- For cloud service, set control protocol in firebase configuration:
-  - `strand1.control_protocol=UDP` for single device UDP control,
-  - `strand1.control_protocol=TCP` for single device TCP control,
-  - `strand1.control_protocol=HTTP` for single device HTTP control.
-  - for hub, set `hub1.control_protocol` instead of `strand1.control_protocol`.
-- To view device configuration options and their default settings, use:
-  ```
-  npm start --prefix device/ -- --help
-  ```
-- Set a discovery protocol and its options in `npm start --prefix device/`
-  command. Use (and adjust if needed) the following options depending on discovery
-  protocol settings in `Device Scan Configuration` in
-  _Build > Actions > Smart home > Actions_:
-  - For a single end device or a hub with UDP discovery:
-  ```
-    --discovery_protocol UDP \
-    --udp_discovery_port 3311 \
-    --udp_discovery_packet A5A5A5A5 \
-  ```
-  - For a single end device with MDNS discovery:
-  ```
-    --discovery_protocol MDNS \
-    --mdns_service_name _sample._tcp.local \
-    --mdns_instance_name strand1._sample._tcp.local \
-  ```
-  - For a hub with MDNS discovery:
-  ```
-    --discovery_protocol MDNS \
-    --mdns_service_name _sample._tcp.local \
-    --mdns_instance_name hub1._sample._tcp.local \
-  ```
-  - For a single end device or a hub with UPNP discovery:
-  ```
-    --discovery_protocol UPNP \
-    --upnp_service_type urn:sample:service:light:1 \
-  ```
-- Set control protocol and control protocol port in `npm start --prefix device/`
-  command.
-  - Control protocol is one of `TCP`, `HTTP`, `UDP`. `
-  - Use `--opc_port` option to change a control protocol port.
-  - Examples:
-    - Select UDP control and default control port `7890`:
-      `--control_protocol UDP \`
-    - Select HTTP with a custom control port value:
-      ```
-        --control_protocol HTTP \
-        --opc_port 7892 \
-      ```
+> Note: See the [virtual device README](device/README.md) for more details on the
+> supported configuration options.
 
 ## Deploy the local execution app
 
@@ -195,10 +178,11 @@ or deploy it to a publicly reacheable URL endpoint.
   npm install --prefix app/
   npm start --prefix app/ -- --host 0.0.0.0
   ```
-  Note: The local development server needs to listen on the same local network as
-  the Home device in order to be able to load the Local Home SDK application.
+  > Note: The local development server needs to listen on the same local network as
+  > the Home device in order to be able to load the Local Home SDK application.
+
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Test > On device testing_: set the development URL to
+- In _Develop > Actions > On device testing_ set the development URL to
   `http://local-dev-server-hostname-or-ip:8080/`
 
 ### Deploy to Firebase Hosting
@@ -210,7 +194,7 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 ```
 
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Test > On device testing_: set the development URL to
+- In _Develop > Actions > On device testing_ set the development URL to
   `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/`
 
 ## Test the local execution app

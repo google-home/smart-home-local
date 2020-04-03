@@ -6,33 +6,35 @@ The virtual device supports the following configuration parameters.
 
 ### Discovery parameters
 
-| Attribute     | Value | Description |
-| ------------- | ----- | ----------- |
-| `discovery_protocol` | `MDNS`, `UPNP`, or `UDP` | Protocol to use for discovery. |
-| `udp_discovery_packet` | Hex-encoded string | Broadcast packet expected for UDP discovery. |
-| `udp_discovery_port` | Number | Port to listen for UDP discovery packet. |
-| `mdns_service_name` | String | Service name to broadcast for mDNS. |
-| `mdns_instance_name` | String | Unique name of the mDNS service instance. |
-| `upnp_service_type` | String | Service type to broadcast for UPnP. |
+| Attribute     | Value | Description | Default Value |
+| ------------- | ----- | ----------- | ------------- |
+| `discovery_protocol` | `MDNS`, `UPNP`, or `UDP` | Required. Protocol to use for discovery. |
+| `udp_discovery_packet` | Hex-encoded string | Broadcast packet expected for UDP discovery. | `A5A5A5A5` |
+| `udp_discovery_port` | Number | Port to listen for UDP discovery packet. | `3311` |
+| `mdns_service_name` | String | Service name to broadcast for mDNS. | `_sample._tcp.local` |
+| `mdns_instance_name` | String | Unique name of the mDNS service instance. | `strand1._sample._tcp.local` |
+| `upnp_service_type` | String | Service type to broadcast for UPnP. | `urn:sample:service:strand:1` |
+| `upnp_device_type` | String | Device type to broadcast for UPnP. | `urn:sample:device:strand:1` |
+| `upnp_server_port` | Number | Port to use for local UPnP server. |`8080` |
 
 ### Control parameters
 
-| Attribute     | Value | Description |
-| ------------- | ----- | ----------- |
-| `control_protocol` | `UDP`, `TCP`, or `HTTP` | Protocol to use for control. |
-| `opc_port` | Number | Port to use for local control server. |
+| Attribute     | Value | Description | Default Value |
+| ------------- | ----- | ----------- | ------------- |
+| `control_protocol` | `UDP`, `TCP`, or `HTTP` | Required. Protocol to use for control. |
+| `opc_port` | Number | Optional. Port to use for local control server. | `7890` |
 
 ### Device parameters
 
-| Attribute     | Value | Description |
-| ------------- | ----- | ----------- |
-|`device_id` | String | Local device ID for the virtual device. |
-|`channel` | Number | Add a new LED strand with the corresponding channel number. |
-|`device_model` | String | Manufacturer's model name for the device. |
-|`hardware_revision` | String | Manufacturer's hardware version. |
-|`firmware_revision` | String | Manufacturer's firmware version. |
-|`led_char` | String | Character to display for each LED strand. |
-|`led_count` | Number | Number of LEDs per strand. |
+| Attribute     | Value | Description | Default Value |
+| ------------- | ----- | ----------- | ------------- |
+|`device_id` | String | Required. Local device ID for the virtual device. |
+|`channel` | Number | Required. Add a new LED strand with the corresponding channel number. |
+|`device_model` | String | Optional. Manufacturer's model name for the device. | `fakecandy` |
+|`hardware_revision` | String | Optional. Manufacturer's hardware version. | `evt-1` |
+|`firmware_revision` | String | Optional. Manufacturer's firmware version. | `v1-beta` |
+|`led_char` | String | Optional. Character to display for each LED strand. | `◉` |
+|`led_count` | Number | Optional. Number of LEDs per strand. | `16` |
 
 ## Device protocol
 

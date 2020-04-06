@@ -3,10 +3,19 @@
   "version": "0.0.1",
   "description": "Placeholder backend for the Local Home SDK sample.",
   "private": true,
+  "author": "Google",
+  "license": "Apache-2.0",
   "engines": {
     "node": "8"
   },
   "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project .",
+    "compile": "tsc --noEmit",
+    "deploy": "firebase deploy --only functions",
+    "firebase": "firebase"
+  },
   "dependencies": {
     "actions-on-google": "^2.12.0",
     "firebase-admin": "^8.4.0",
@@ -17,14 +26,5 @@
     "firebase-tools": "^7.3.0",
     "tslint": "^5.17.0",
     "typescript": "^3.5.1"
-  },
-  "scripts": {
-    "build": "tsc",
-    "lint": "tslint --project .",
-    "compile": "tsc --noEmit",
-    "deploy": "firebase deploy --only functions",
-    "firebase": "firebase"
-  },
-  "author": "Google",
-  "license": "Apache-2.0"
+  }
 }

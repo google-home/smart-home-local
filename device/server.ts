@@ -15,15 +15,15 @@
 // - prints led state on standard output.
 // - responds to UDP broadcast with device information encoded in CBOR
 
-import * as cbor from 'cbor';
+import cbor from 'cbor';
 import chalk from 'chalk';
-import * as dgram from 'dgram';
+import dgram from 'dgram';
 import express from 'express';
-import * as net from 'net';
-import * as upnp from 'node-ssdp';
+import net from 'net';
+import upnp from 'node-ssdp';
 import {Readable} from 'stream';
-import * as xmlBuilder from 'xmlbuilder2';
-import * as yargs from 'yargs';
+import xmlBuilder from 'xmlbuilder2';
+import yargs from 'yargs';
 
 import {ControlKind, DiscoveryKind} from '../common/discovery';
 

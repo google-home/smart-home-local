@@ -1,16 +1,14 @@
 {
-  "defaultSeverity": "error",
-  "extends": ["tslint:recommended"],
-  "jsRules": {},
-  "rules": {
-    "no-console": false,
-    "no-bitwise": false,
-    "object-literal-sort-keys": false,
-    "no-var-requires": false,
-    "ordered-imports": false,
-    "max-classes-per-file": [true, 5, "exclude-class-expressions"],
-    "quotemark": [true, "single"],
-    "space-before-function-paren": [false]
-  },
-  "rulesDirectory": []
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "rules": {
+      "no-console": false,
+      "no-bitwise": false,
+      "object-literal-sort-keys": [
+        true,
+        "match-declaration-order-only"
+      ]
+    }
 }

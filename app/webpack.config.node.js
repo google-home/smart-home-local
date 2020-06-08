@@ -1,5 +1,5 @@
 /**
- * Copyright 2019, Google LLC
+ * Copyright 2020, Google LLC
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,20 +11,15 @@
  * limitations under the License.
  */
 
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
+  target: 'node',
   entry: './index.ts',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'dist/node/'),
     filename: 'bundle.js'
-  },
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist',
-    inline: false
   },
   module: {
     rules: [
@@ -37,10 +32,4 @@ module.exports = {
   resolve: {
     extensions: [ '.ts', '.js' ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: 'index.html',
-      inject: 'head'
-    })
-  ]
-}
+};

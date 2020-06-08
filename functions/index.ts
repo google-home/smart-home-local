@@ -89,9 +89,9 @@ app.onQuery((body, headers) => {
 exports.smarthome = functions.https.onRequest(app);
 
 exports.authorize = functions.https.onRequest((req, res) => {
+  const redirectUri = req.query.redirect_uri as string;
   res.status(200).send(`<a href="${
-      decodeURIComponent(
-          req.query.redirect_uri)}?code=placeholder-auth-code&state=${
+      decodeURIComponent(redirectUri)}?code=placeholder-auth-code&state=${
       req.query.state}">Complete Account Linking</a>`);
 });
 

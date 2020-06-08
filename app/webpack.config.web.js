@@ -1,5 +1,5 @@
 /**
- * Copyright 2019, Google LLC
+ * Copyright 2020, Google LLC
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,18 +11,25 @@
  * limitations under the License.
  */
 
-/// <reference types="@google/local-home-sdk" />
+const path = require('path');
 
-import {HomeApp} from './app';
-
-const smarthomeApp: smarthome.App = new smarthome.App('0.0.1');
-const homeApp = new HomeApp(smarthomeApp);
-
-smarthomeApp
-    .onIdentify(homeApp.identifyHandler)
-    .onReachableDevices(homeApp.reachableDevicesHandler)
-    .onExecute(homeApp.executeHandler)
-    .listen()
-    .then(() => {
-      console.log('Ready');
-    });
+module.exports = {
+  mode: 'production',
+  target: 'web',
+  entry: './index.ts',
+  output: {
+    path: path.resolve(__dirname, 'dist/web/'),
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader'
+      }
+    ]
+  },
+  resolve: {
+    extensions: [ '.ts', '.js' ]
+  }
+};

@@ -1,8 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "es2018",
     "moduleResolution": "node",
     "strict": true,
-    "sourceMap": true
-  }
+    "lib": [
+        "ESNext.Array",
+        "DOM"
+    ],
+    "esModuleInterop": true
+  },
+  "files" : [
+      "index.ts",
+      "app.ts",
+      "types.d.ts",
+      "../common/discovery.ts"
+  ]
 }

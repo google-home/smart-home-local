@@ -14,14 +14,16 @@
 /// <reference types="@google/local-home-sdk" />
 
 import {ControlKind} from '../common/discovery';
-
 import {IColorAbsolute, ICustomData, IDiscoveryData} from './types';
 
 import {DOMParser} from 'xmldom';
+import cbor from 'cbor';
 
+/* tslint:disable:no-var-requires */
 // TODO(proppy): add typings
-const cbor = require('cbor');
+require('array.prototype.flatmap/auto');
 const opcStream = require('opc');
+/* tslint:enable:no-var-requires */
 
 function makeSendCommand(protocol: ControlKind, buf: Buffer, path?: string) {
   switch (protocol) {
@@ -107,8 +109,8 @@ export class HomeApp {
         console.log(`discoveryData: ${JSON.stringify(discoveryData, null, 2)}`);
 
         const identifyResponse: smarthome.IntentFlow.IdentifyResponse = {
-          intent: smarthome.Intents.IDENTIFY,
           requestId: identifyRequest.requestId,
+          intent: smarthome.Intents.IDENTIFY,
           payload: {
             device: {
               deviceInfo: {
@@ -118,7 +120,7 @@ export class HomeApp {
                 swVersion: discoveryData.fw_rev || '',
               },
               ...((discoveryData.channels.length > 1) ?
-                      {id: discoveryData.id, isProxy: true, isLocalOnly: true} :
+                      {id: discoveryData.id, isLocalOnly: true, isProxy: true} :
                       {
                         id: discoveryData.id || 'deviceId',
                         verificationId: discoveryData.id,

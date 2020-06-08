@@ -176,7 +176,7 @@ or deploy it to a publicly reacheable URL endpoint.
 - Start the local development server:
   ```
   npm install --prefix app/
-  npm start --prefix app/ -- --host 0.0.0.0
+  npm start --prefix app/
   ```
   > Note: The local development server needs to listen on the same local network as
   > the Home device in order to be able to load the Local Home SDK application.

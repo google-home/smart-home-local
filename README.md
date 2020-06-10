@@ -46,10 +46,10 @@ _Develop > Actions > Configure local home SDK_ under **Device Scan Configuration
 > those parameters when you [set up the virtual device](#set-up-the-virtual-device).
 
 #### UDP
-- **Broadcast address**: `255.255.255.255`
-- **Broadcast port**: `3312`
-- **Listen port**: `3311`
-- **Discovery packet**: `A5A5A5A5`
+- **UDP discovery address**: `255.255.255.255`
+- **UDP discovery port in**: `3312`
+- **UDP discovery port out**: `3311`
+- **UDP discovery packet**: `A5A5A5A5`
 
 #### mDNS
 - **mDNS service name**: `_sample._tcp.local`
@@ -94,17 +94,8 @@ chosen device type and control protocol. Here are some examples for configuring 
   controlled via TCP commands:
   ```
   npm run firebase --prefix functions/ -- functions:config:set \
-      strand1.leds=16 strand1.channel=1 \
-      strand1.control_protocol=TCP
-  npm run deploy --prefix functions/
-  ```
-
-- Report three individual light strands connected through a proxy (`hub1`) and
-  controlled via HTTP commands:
-  ```
-  npm run firebase --prefix functions/ -- functions:config:set \
       hub1.leds=16 hub1.channel=1,2,3 \
-      hub1.control_protocol=HTTP
+      hub1.control_protocol=TCP
   npm run deploy --prefix functions/
   ```
 
@@ -136,25 +127,12 @@ to the terminal in a colorful way.
 Here are some examples for configuring the virtual device for different use cases:
 
 - Start the virtual device as a single device (`strand1`) discovered via
-  UDP broadcast and controlled with UDP commands:
+  UDP broadcast and controlled with TCP commands:
   ```
   npm install --prefix device/
   npm start --prefix device/ -- \
       --device_id strand1 \
       --discovery_protocol UDP \
-      --control_protocol UDP \
-      --channel 1
-  ```
-
-- Start the virtual device as a single device (`strand1`) discovered via
-  UPnP with a custom advertisement and controlled with TCP commands:
-  ```
-  npm install --prefix device/
-  npm start --prefix device/ -- \
-      --device_id strand1 \
-      --discovery_protocol UPNP \
-      --upnp_device_type urn:schemas-upnp-org:device:BinaryLight:1 \
-      --upnp_service_type urn:schemas-upnp-org:service:SwitchPower:1 \
       --control_protocol TCP \
       --channel 1
   ```
@@ -170,6 +148,19 @@ Here are some examples for configuring the virtual device for different use case
       --channel 1 \
       --channel 2 \
       --channel 3
+  ```
+
+- Start the virtual device as a single device (`strand1`) discovered via
+  UPnP with a custom advertisement and controlled with TCP commands:
+  ```
+  npm install --prefix device/
+  npm start --prefix device/ -- \
+      --device_id strand1 \
+      --discovery_protocol UPNP \
+      --upnp_device_type urn:schemas-upnp-org:device:BinaryLight:1 \
+      --upnp_service_type urn:schemas-upnp-org:service:SwitchPower:1 \
+      --control_protocol TCP \
+      --channel 1
   ```
 
 > Note: See the [virtual device README](device/README.md) for more details on the

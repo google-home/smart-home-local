@@ -169,8 +169,7 @@ or deploy it to a publicly reacheable URL endpoint.
   > the Home device in order to be able to load the Local Home SDK application.
 
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Develop > Actions > On device testing_ set the development URL to
-  `http://local-dev-server-hostname-or-ip:8080/`
+- In _Develop > Actions > On device testing_ set the **Chrome** and **Node** development URLs to the ones displayed in the local development server logs.
 
 ### Deploy to Firebase Hosting
 
@@ -181,8 +180,9 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 ```
 
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Develop > Actions > On device testing_ set the development URL to
-  `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/`
+- In _Develop > Actions > On device testing_ set the development URLs to
+  - **Chrome**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/web/index.html`
+  - **Node**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/node/bundle.js`
 
 ## Test the local execution app
 

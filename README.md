@@ -17,6 +17,13 @@ The sample supports the following protocols along with the companion
 
 ## Configure the Actions project
 
+> Note: This project uses
+> [Cloud Functions for Firebase](https://firebase.google.com/docs/functions),
+> which requires you to associate a billing account with your project.
+> Actions projects do not create a billing account by default. See
+> [Create a new billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account)
+> for more information.
+
 - Create a new _Smart Home_ project in the [Actions console](https://console.actions.google.com/)
 - Deploy the placeholder smart home provider to _Cloud Functions for Firebase_
   using the same Project ID:

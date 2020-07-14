@@ -79,10 +79,36 @@ app.onSync((body, headers) => {
   };
 });
 app.onQuery((body, headers) => {
+  // Command-only devices do not support state queries
   return {
     requestId: body.requestId,
     payload: {
-      devices: [],
+      devices: devices.reduce((result, device) => {
+        result[device.id] = {
+          status: 'ERROR',
+          errorCode: 'notSupported',
+          debugString: `${device.id} is command only`,
+        };
+        return result;
+      }, {}),
+    },
+  };
+});
+app.onExecute((body, headers) => {
+  // EXECUTE requests should be handled by local fulfillment
+  return {
+    requestId: body.requestId,
+    payload: {
+      commands: body.inputs[0].payload.commands.map((command) => {
+        console.error(`Cloud fallback for ${command.execution[0].command}.`,
+        `EXECUTE received for device ids: ${command.devices.map((device) => device.id)}.`);
+        return {
+          ids: command.devices.map((device) => device.id),
+          status: 'ERROR',
+          errorCode: 'actionNotAvailable',
+          debugString: `Ensure devices are locally identified.`,
+        };
+      }),
     },
   };
 });

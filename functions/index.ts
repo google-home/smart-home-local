@@ -41,9 +41,10 @@ const devices =
                           }));
     });
 
-const app = smarthome({debug: true});
+const app = smarthome();
 
 app.onSync((body, headers) => {
+  functions.logger.log('User account linked from Google Assistant');
   return {
     requestId: body.requestId,
     payload: {
@@ -79,6 +80,7 @@ app.onSync((body, headers) => {
   };
 });
 app.onQuery((body, headers) => {
+  functions.logger.log('Cloud Fulfillment received QUERY');
   // Command-only devices do not support state queries
   return {
     requestId: body.requestId,
@@ -95,12 +97,13 @@ app.onQuery((body, headers) => {
   };
 });
 app.onExecute((body, headers) => {
+  functions.logger.log('Cloud Fulfillment received EXECUTE');
   // EXECUTE requests should be handled by local fulfillment
   return {
     requestId: body.requestId,
     payload: {
       commands: body.inputs[0].payload.commands.map((command) => {
-        console.error(`Cloud fallback for ${command.execution[0].command}.`,
+        functions.logger.error(`Cloud fallback for ${command.execution[0].command}.`,
         `EXECUTE received for device ids: ${command.devices.map((device) => device.id)}.`);
         return {
           ids: command.devices.map((device) => device.id),
@@ -111,6 +114,11 @@ app.onExecute((body, headers) => {
       }),
     },
   };
+});
+app.onDisconnect((body, headers) => {
+  functions.logger.log('User account unlinked from Google Assistant');
+  // Return empty response
+  return {};
 });
 exports.smarthome = functions.https.onRequest(app);
 

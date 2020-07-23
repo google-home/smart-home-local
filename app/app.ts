@@ -120,7 +120,7 @@ export class HomeApp {
                 swVersion: discoveryData.fw_rev || '',
               },
               ...((discoveryData.channels.length > 1) ?
-                      {id: discoveryData.id, isLocalOnly: true, isProxy: true} :
+                      {id: discoveryData.id, isProxy: true, isLocalOnly: true} :
                       {
                         id: discoveryData.id || 'deviceId',
                         verificationId: discoveryData.id,

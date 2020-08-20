@@ -22,7 +22,6 @@ const config = functions.config();
 const devices =
     Object.entries(config).flatMap(([deviceId, deviceConf]: [string, any]) => {
       const port = parseInt(deviceConf.port || '7890', 10);
-      const leds = parseInt(deviceConf.leds || '16', 10);
       const controlProtocol =
           controlKinds.includes(deviceConf.control_protocol) ?
           deviceConf.control_protocol :
@@ -35,7 +34,6 @@ const devices =
                             name: `${deviceId} #${c}`,
                             channel: parseInt(c, 10),
                             proxy,
-                            leds,
                             port,
                             control_protocol: controlProtocol,
                           }));

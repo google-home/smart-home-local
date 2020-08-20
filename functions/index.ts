@@ -51,7 +51,7 @@ app.onSync((body, headers) => {
       devices: devices.map((device) => ({
                              type: 'action.devices.types.LIGHT',
                              traits: [
-                               'action.devices.traits.ColorSetting',
+                               'action.devices.traits.OnOff',
                              ],
                              id: device.id,
                              otherDeviceIds: [{
@@ -63,13 +63,8 @@ app.onSync((body, headers) => {
                                nicknames: [],
                              },
                              willReportState: false,
-                             attributes: {
-                               colorModel: 'rgb',
-                               commandOnlyColorSetting: true,
-                             },
                              customData: {
                                channel: device.channel,
-                               leds: device.leds,
                                port: device.port,
                                proxy: device.proxy,
                                control_protocol: device.control_protocol,

@@ -92,7 +92,7 @@ chosen device type and control protocol. Here are some examples for configuring 
 - Report a single device (`strand1`) controlled via UDP commands:
   ```
   npm run firebase --prefix functions/ -- functions:config:set \
-      strand1.leds=16 strand1.channel=1 \
+      strand1.channel=1 \
       strand1.control_protocol=UDP
   npm run deploy --prefix functions/
   ```
@@ -101,7 +101,7 @@ chosen device type and control protocol. Here are some examples for configuring 
   controlled via HTTP commands:
   ```
   npm run firebase --prefix functions/ -- functions:config:set \
-      hub1.leds=16 hub1.channel=1,2,3 \
+      hub1.channel=1,2,3 \
       hub1.control_protocol=HTTP
   npm run deploy --prefix functions/
   ```

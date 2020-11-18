@@ -6,7 +6,7 @@
     "author": "Google",
     "license": "Apache-2.0",
     "dependencies": {
-        "@google/local-home-sdk": "^1.0.0",
+        "@google/local-home-sdk": "^1.4.0",
         "array.prototype.flatmap": "^1.2.3",
         "cbor": "^5.0.2",
         "opc": "^1.1.3",

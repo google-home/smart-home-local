@@ -55,6 +55,9 @@ function smarthomeAppStub(deviceManager?: any) {
     public onIdentify() {
       return this;
     }
+    public onQuery() {
+      return this;
+    }
     public onReachableDevices() {
       return this;
     }

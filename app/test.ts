@@ -49,16 +49,40 @@ function smarthomeAppStub(deviceManager?: any) {
     public listen() {
       return Promise.resolve();
     }
-    public onExecute() {
+    public on(eventType: any, handler: any) {
       return this;
     }
-    public onIdentify() {
+    public onExecute(handler: any) {
       return this;
     }
-    public onQuery() {
+    public onIdentify(handler: any) {
       return this;
     }
-    public onReachableDevices() {
+    public onIndicate(handler: any) {
+      return this;
+    }
+    public onParseNotification(handler: any) {
+      return this;
+    }
+    public onProvision(handler: any) {
+      return this;
+    }
+    public onProxySelected(handler: any) {
+      return this;
+    }
+    public onQuery(handler: any) {
+      return this;
+    }
+    public onReachableDevices(handler: any) {
+      return this;
+    }
+    public onRegister(handler: any) {
+      return this;
+    }
+    public onUnprovision(handler: any) {
+      return this;
+    }
+    public onUpdate(handler: any) {
       return this;
     }
   };
@@ -147,7 +171,7 @@ test('IDENTIFY handler', async (t) => {
     ],
     devices: [],
   });
-  t.is(identifyResponse.payload.device.verificationId, deviceData.id);
+  t.is((identifyResponse.payload.device as {verificationId: string}).verificationId, deviceData.id);
 });
 
 // TODO(proppy): add REACHEABLE_DEVICES hub test

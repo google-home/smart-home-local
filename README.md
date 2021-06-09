@@ -36,21 +36,23 @@ The sample supports the following protocols along with the companion
   _Cloud Functions for Firebase_ deployment:
   - **Fulfillment**: `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/smarthome`
 - In _Develop > Account linking_, set the following configuration values:
-  - **Linking type**: `OAuth` / `Authorization code`
   - **Client ID**:: `placeholder-client-id`
   - **Client secret**: `placeholder-client-secret`
   - **Authorization URL**: `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/authorize`
   - **Token URL**: `https://${REGION}-${PROJECT_ID}.cloudfunctions.net/token`
+- Click *Save*
 
 ### Select a discovery protocol
 
 Choose one of the supported the discovery protocols that you would like to test,
-and enter its attributes in the Actions console at
-_Develop > Actions > Configure local home SDK_ under **Device Scan Configuration**.
+and create a new scan configuration in the Actions console.
 
 > Note: These are the default values used by the [virtual device](device/README.md)
 > for discovery. If you choose to use different values, you will need to supply
 > those parameters when you [set up the virtual device](#set-up-the-virtual-device).
+
+- In
+_Develop > Actions > Configure local home SDK > Add device scan configuration_, Click in **New scan config**.
 
 #### UDP
 - **Broadcast address**: `255.255.255.255`
@@ -66,6 +68,8 @@ _Develop > Actions > Configure local home SDK_ under **Device Scan Configuration
 
 #### UPnP
 - **UPNP service type**: `urn:sample:service:light:1`
+
+- Click *Save*
 
 ### Select a control protocol
 
@@ -105,10 +109,6 @@ chosen device type and control protocol. Here are some examples for configuring 
       hub1.control_protocol=HTTP
   npm run deploy --prefix functions/
   ```
-
-After you have deployed the cloud configuration, trigger a new `SYNC` request from
-Google Assistant by unlinking and re-adding the placeholder smart home provider in
-the _Google Home app_.
 
 ## Set up the virtual device
 
@@ -176,7 +176,10 @@ or deploy it to a publicly reacheable URL endpoint.
   > the Home device in order to be able to load the Local Home SDK application.
 
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Develop > Actions > On device testing_ set the **Chrome** and **Node** development URLs to the ones displayed in the local development server logs.
+- In _Develop > Actions > Configure local home SDK_
+  - Set the *testing URL for Chrome* to the one displayed in the local development server logs.
+  - Set the *testing URL for Node* to the one displayed in the local development server logs.
+- Click *Save*
 
 ### Deploy to Firebase Hosting
 
@@ -190,9 +193,19 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 - In _Develop > Actions > On device testing_ set the development URLs to
   - **Chrome**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/web/index.html`
   - **Node**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/node/bundle.js`
+- Click *Save*
 
 ## Test the local execution app
 
+- In _Develop > Invocation_, set the *Display name* for the smart home Action.
+- In _Test_, click *Start testing*
+- In the _Google Home app_
+  - Click the '+' sign
+  - Select *Work with Google*
+  - In the list of providers, select your smart home Action by *Display name* prefixed with `[test]`
+  - Click *Link*
+  - Click *Complete Account Link*
+- Select the linked devices and click on *Add to a room*.
 - Reboot the Google Home Device
 - Open `chrome://inspect`
 - Locate the Local Home SDK application and click `inspect` to launch the
@@ -203,6 +216,11 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
   ```
   ◉◉◉◉◉◉◉◉◉◉◉◉◉◉◉◉
   ```
+
+## Troubleshooting
+
+- Make sure the Google Home device, the virtual device and your workstation are on the same network.
+- Make sure to disable any firewall running on your workstation.
 
 ## Test and Lint
 

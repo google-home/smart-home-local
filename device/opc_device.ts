@@ -44,7 +44,7 @@ export class Handler {
   handle(message: IMessage): Buffer|undefined {
     console.debug('received command:', message.command, message.data);
     switch (message.command) {
-      case 0:  // set-pixel-color
+      case 0: { // set-pixel-color
         // TODO(proppy): implement channel 0 broadcast
         if (!this.strands.has(message.channel)) {
           console.warn('unknown OPC channel:', message.command);
@@ -64,6 +64,20 @@ export class Handler {
           process.stdout.write('\n');
         }
         break;
+      }
+      case 0xff: { // SYSEX
+        if (message.data[0] === 0x00 && // System IDs[0]
+          message.data[1] === 0x03 && // System IDs[1]
+          message.data[2] === 0x00 && // get-pixel-color[0]
+          message.data[3] === 0x01) { // get-pixel-color[1]
+          const stream = opcStream();
+          stream.writeMessage(message.channel,
+                              0xff, // SYSEX
+                              this.strands.get(message.channel)!.buffer);
+          return stream.read();
+        }
+        break;
+      }
       default:
         console.warn('Unsupported OPC command:', message.command);
         break;

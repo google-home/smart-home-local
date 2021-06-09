@@ -77,4 +77,55 @@ export class HomeApp {
     // Return execution response to smarthome infrastructure.
     return executeResponse.build();
   }
+
+  async queryHandler(queryRequest: smarthome.IntentFlow.QueryRequest): Promise<smarthome.IntentFlow.QueryResponse> {
+    // TODO(proppy): handle multiple devices.
+    const device = queryRequest.inputs[0].payload.devices[0];
+    const customData = device.customData as ICustomData;
+    const stream = opcStream();
+    stream.writeMessage(customData.channel,
+                        0xff, // SYSEX
+                        Buffer.from([
+                          0x00, 0x03, // System IDs
+                          0x00, 0x01 // get-pixel-color
+                        ]));
+    const opcMessage = stream.read();
+    const getPixelColorCommand = new smarthome.DataFlow.HttpRequestData();
+    getPixelColorCommand.requestId = queryRequest.requestId;
+    getPixelColorCommand.deviceId = device.id;
+    getPixelColorCommand.port = customData.port;
+    getPixelColorCommand.method = smarthome.Constants.HttpOperation.GET;
+    getPixelColorCommand.path = `/${customData.channel}`
+    console.debug('HTTP getPixelColorCommand:', getPixelColorCommand);
+    const getPixelColorResponse = await this.app.getDeviceManager().send(getPixelColorCommand) as smarthome.DataFlow.HttpResponseData;
+    console.debug('HTTP getPixelColorResponse:', getPixelColorResponse);
+    if (getPixelColorResponse.httpResponse.statusCode !== 200) {
+      throw new Error(`Unsupported protocol for OPC get-pixel-color: HTTP`);
+    }
+    const opcPayload = Buffer.from(getPixelColorResponse.httpResponse.body as string, 'base64');
+    console.debug('HTTP opcPayload:', opcPayload);
+    const opcChannel = opcPayload.readUInt8(0);
+    const opcCommand = opcPayload.readUInt8(1); // SYSEX
+    const opcDataSize = opcPayload.readUInt16BE(2);
+    const opcData = opcPayload.slice(4);
+    if (opcDataSize !== opcData.length) {
+      throw new Error(`Unexpected message size: expected: ${opcDataSize} got: ${opcData.length}`);
+    }
+    const strand = opcStrand(opcData);
+    const pixel = strand.getPixel(0); // get  first pixel of the strand.
+    const rgb = pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+    return {
+      requestId: queryRequest.requestId,
+      payload: {
+        devices: {
+          [device.id]: {
+            online: true,
+            color: {
+              spectrumRgb: rgb
+            }
+          }
+        }
+      }
+    };
+  }
 }

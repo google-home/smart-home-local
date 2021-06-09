@@ -22,6 +22,7 @@ smarthomeApp
   .onIdentify(homeApp.identifyHandler)
   .onReachableDevices(homeApp.reachableDevicesHandler)
   .onExecute(homeApp.executeHandler)
+  .onQuery(homeApp.queryHandler)
   .listen()
   .then(() => {
     console.log('Ready');

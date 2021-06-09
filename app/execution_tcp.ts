@@ -74,4 +74,65 @@ export class HomeApp {
     // Return execution response to smarthome infrastructure.
     return executeResponse.build();
   }
+
+  async queryHandler(queryRequest: smarthome.IntentFlow.QueryRequest): Promise<smarthome.IntentFlow.QueryResponse> {
+    // TODO(proppy): handle multiple devices.
+    const device = queryRequest.inputs[0].payload.devices[0];
+    const customData = device.customData as ICustomData;
+    const stream = opcStream();
+    stream.writeMessage(customData.channel,
+                        0xff, // SYSEX
+                        Buffer.from([
+                          0x00, 0x03, // System IDs
+                          0x00, 0x01 // get-pixel-color
+                        ]));
+    const opcMessage = stream.read();
+    const getPixelColorCommand = new smarthome.DataFlow.TcpRequestData();
+    getPixelColorCommand.requestId = queryRequest.requestId;
+    getPixelColorCommand.deviceId = device.id;
+    getPixelColorCommand.port = customData.port;
+    getPixelColorCommand.operation = smarthome.Constants.TcpOperation.WRITE;
+    getPixelColorCommand.data = opcMessage.toString('hex');
+    console.debug('TCP getPixelColorCommand:', getPixelColorCommand);
+    const getPixelColorResponse = await this.app.getDeviceManager().send(getPixelColorCommand);
+    console.debug('TCP getPixelColorResponse:', getPixelColorResponse);
+
+    const readHeaderCommand = new smarthome.DataFlow.TcpRequestData();
+    readHeaderCommand.operation = smarthome.Constants.TcpOperation.READ;
+    readHeaderCommand.requestId = queryRequest.requestId;
+    readHeaderCommand.deviceId = device.id;
+    readHeaderCommand.port = customData.port;
+    const opcHeaderSize = 4;
+    readHeaderCommand.bytesToRead = opcHeaderSize + customData.leds * 3;
+    console.debug('TCP readHeaderCommand:', readHeaderCommand);
+    const readHeaderResponse = await this.app.getDeviceManager().send(readHeaderCommand) as smarthome.DataFlow.TcpResponseData;
+    console.debug('TCP readHeaderResponse:', readHeaderResponse);
+    const opcPayload = Buffer.from(readHeaderResponse.tcpResponse.data, 'hex');
+    console.debug('TCP opcPayload:', opcPayload);
+    const opcChannel = opcPayload.readUInt8(0);
+    const opcCommand = opcPayload.readUInt8(1); // SYSEX
+    const opcDataSize = opcPayload.readUInt16BE(2);
+    console.debug('TCP opcDataSize:', opcDataSize);
+    const opcData = opcPayload.slice(4);
+    console.debug('TCP opcData:', opcData);
+    if (opcDataSize !== opcData.length) {
+      throw new Error(`Unexpected message size: expected: ${opcDataSize} got: ${opcData.length}`);
+    }
+    const strand = opcStrand(opcData);
+    const pixel = strand.getPixel(0); // get  first pixel of the strand.
+    const rgb = pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+    return {
+      requestId: queryRequest.requestId,
+      payload: {
+        devices: {
+          [device.id]: {
+            online: true,
+            color: {
+              spectrumRgb: rgb
+            }
+          }
+        }
+      }
+    };
+  }
 }

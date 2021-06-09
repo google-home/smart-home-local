@@ -179,6 +179,8 @@ or deploy it to a publicly reacheable URL endpoint.
 - In _Develop > Actions > Configure local home SDK_
   - Set the *testing URL for Chrome* to the one displayed in the local development server logs.
   - Set the *testing URL for Node* to the one displayed in the local development server logs.
+  - Under _Add capabilities_
+    - Check *Support local query*.
 - Click *Save*
 
 ### Deploy to Firebase Hosting
@@ -190,9 +192,11 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 ```
 
 - Go to the smart home project in the [Actions console](https://console.actions.google.com/)
-- In _Develop > Actions > On device testing_ set the development URLs to
-  - **Chrome**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/web/index.html`
-  - **Node**: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/node/bundle.js`
+- In _Develop > Actions > Configure local home SDK_
+  - Set the *testing URL for Chrome* to: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/web/index.html`
+  - Set the *testing URL for Node* to: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/node/bundle.js`
+  - Under _Add capabilities_
+    - Check *Support local query*.
 - Click *Save*
 
 ## Test the local execution app

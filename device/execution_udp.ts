@@ -24,6 +24,16 @@ export function start(port: number, opcHandler: opcDevice.Handler) {
     console.debug(`UDP: from ${rinfo.address} got`, msg);
     Readable.from(msg).pipe(opcParser()).on('data', (message: opcDevice.IMessage) => {
       opcHandler.handle(message);
+      const response = opcHandler.handle(message);
+      if (response !== undefined) {
+        server.send(response, rinfo.port, rinfo.address, (error) => {
+          if (error !== null) {
+            console.error('UDP failed to send OPC command response:', error);
+            return;
+          }
+          console.debug(`UDP: sent response to ${rinfo.address}:${rinfo.port}:`, response);
+        });
+      }
     });
   });
   server.on('listening', () => {

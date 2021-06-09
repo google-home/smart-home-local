@@ -97,4 +97,25 @@ export class HomeApp {
     console.log('EXECUTE response:', executeResponse);
     return executeResponse;
   }
+
+  public queryHandler = (queryRequest: smarthome.IntentFlow.QueryRequest): Promise<smarthome.IntentFlow.QueryResponse> => {
+    console.log('QUERY request:', queryRequest);
+    const queryResponse = (() => {
+      // Infer execution protocol from the first device custom data.
+      const device = queryRequest.inputs[0].payload.devices[0];
+      const customData = device.customData as ICustomData;
+      switch (customData.control_protocol) {
+        case 'UDP':
+          return this.appExecutionUdp.queryHandler(queryRequest);
+        case 'TCP':
+          return this.appExecutionTcp.queryHandler(queryRequest);
+        case 'HTTP':
+          return this.appExecutionHttp.queryHandler(queryRequest);
+        default:
+          throw new Error(`Unsupported protocol for QUERY intent requestId ${queryRequest.requestId}: ${customData.control_protocol}`);
+      }
+    })();
+    console.log('QUERY response:', queryResponse);
+    return queryResponse;
+  }
 }

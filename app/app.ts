@@ -13,279 +13,88 @@
 
 /// <reference types="@google/local-home-sdk" />
 
-import {ControlKind} from '../common/discovery';
-import {IColorAbsolute, ICustomData, IDiscoveryData} from './types';
+import * as discoveryUdp from './discovery_udp';
+import * as discoveryMdns from './discovery_mdns';
+import * as discoveryUpnp from './discovery_upnp';
+import * as executionUdp from './execution_udp';
+import * as executionTcp from './execution_tcp';
+import * as executionHttp from './execution_http';
 
-import {DOMParser} from 'xmldom';
-import cbor from 'cbor';
+import type {ICustomData, ControlKind} from './types';
 
-/* tslint:disable:no-var-requires */
-// TODO(proppy): add typings
-require('array.prototype.flatmap/auto');
-const opcStream = require('opc');
-/* tslint:enable:no-var-requires */
-
-function makeSendCommand(protocol: ControlKind, buf: Buffer, path?: string) {
-  switch (protocol) {
-    case ControlKind.UDP:
-      return makeUdpSend(buf);
-    case ControlKind.TCP:
-      return makeTcpWrite(buf);
-    case ControlKind.HTTP:
-      return makeHttpPost(buf, path);
-    default:
-      throw Error(`Unsupported protocol for send: ${protocol}`);
-  }
-}
-
-function makeReceiveCommand(protocol: ControlKind, path?: string) {
-  switch (protocol) {
-    case ControlKind.TCP:
-      return makeTcpRead();
-    case ControlKind.HTTP:
-      return makeHttpGet(path);
-    default:
-      throw Error(`Unsupported protocol for receive: ${protocol}`);
-  }
-}
-
-function makeUdpSend(buf: Buffer) {
-  const command = new smarthome.DataFlow.UdpRequestData();
-  command.data = buf.toString('hex');
-  return command;
-}
-
-function makeTcpWrite(buf: Buffer) {
-  const command = new smarthome.DataFlow.TcpRequestData();
-  command.operation = smarthome.Constants.TcpOperation.WRITE;
-  command.data = buf.toString('hex');
-  return command;
-}
-
-function makeTcpRead() {
-  const command = new smarthome.DataFlow.TcpRequestData();
-  command.operation = smarthome.Constants.TcpOperation.READ;
-  command.bytesToRead = 1024;
-  return command;
-}
-
-function makeHttpGet(path?: string) {
-  const command = new smarthome.DataFlow.HttpRequestData();
-  command.method = smarthome.Constants.HttpOperation.GET;
-  if (path !== undefined) {
-    command.path = path;
-  }
-  return command;
-}
-
-function makeHttpPost(buf: Buffer, path?: string) {
-  const command = new smarthome.DataFlow.HttpRequestData();
-  command.method = smarthome.Constants.HttpOperation.POST;
-  command.data = buf.toString('base64');
-  command.dataType = 'application/octet-stream';
-  if (path !== undefined) {
-    command.path = path;
-  }
-  return command;
-}
-
-// HomeApp implements IDENTIFY and EXECUTE handler for smarthome local device
-// execution.
 export class HomeApp {
-  constructor(private readonly app: smarthome.App) {
-    this.app = app;
+  private readonly appDiscoveryUdp: discoveryUdp.HomeApp;
+  private readonly appDiscoveryMdns: discoveryMdns.HomeApp;
+  private readonly appDiscoveryUpnp: discoveryUpnp.HomeApp;
+  private readonly appExecutionUdp: executionUdp.HomeApp;
+  private readonly appExecutionTcp: executionTcp.HomeApp;
+  private readonly appExecutionHttp: executionHttp.HomeApp;
+
+  constructor(app: smarthome.App) {
+    this.appDiscoveryUdp = new discoveryUdp.HomeApp(app);
+    this.appDiscoveryMdns = new discoveryMdns.HomeApp(app);
+    this.appDiscoveryUpnp = new discoveryUpnp.HomeApp(app);
+    this.appExecutionUdp = new executionUdp.HomeApp(app);
+    this.appExecutionTcp = new executionTcp.HomeApp(app);
+    this.appExecutionHttp = new executionHttp.HomeApp(app);
   }
 
-  // identifyHandlers decode UDP scan data and structured device information.
-  public identifyHandler = async(
-      identifyRequest: smarthome.IntentFlow.IdentifyRequest):
-      Promise<smarthome.IntentFlow.IdentifyResponse> => {
-        console.log(
-            `IDENTIFY request ${JSON.stringify(identifyRequest, null, 2)}`);
-        // TODO(proppy): handle multiple inputs.
-        const device = identifyRequest.inputs[0].payload.device;
-        const discoveryData: IDiscoveryData =
-            await this.getDiscoveryData(device, identifyRequest.requestId);
-        console.log(`discoveryData: ${JSON.stringify(discoveryData, null, 2)}`);
-
-        const identifyResponse: smarthome.IntentFlow.IdentifyResponse = {
-          requestId: identifyRequest.requestId,
-          intent: smarthome.Intents.IDENTIFY,
-          payload: {
-            device: {
-              deviceInfo: {
-                manufacturer: 'fakecandy corp',
-                model: discoveryData.model,
-                hwVersion: discoveryData.hw_rev || '',
-                swVersion: discoveryData.fw_rev || '',
-              },
-              ...((discoveryData.channels.length > 1) ?
-                      {id: discoveryData.id, isProxy: true, isLocalOnly: true} :
-                      {
-                        id: discoveryData.id || 'deviceId',
-                        verificationId: discoveryData.id,
-                      }),
-            },
-          },
-        };
-        console.log(
-            `IDENTIFY response ${JSON.stringify(identifyResponse, null, 2)}`);
-        return identifyResponse;
+  public identifyHandler = (identifyRequest: smarthome.IntentFlow.IdentifyRequest): Promise<smarthome.IntentFlow.IdentifyResponse> => {
+    console.log('IDENTIFY request:', identifyRequest);
+    const identifyResponse = (() => {
+      // Infer discovery protocol from scan data.
+      const device = identifyRequest.inputs[0].payload.device;
+      if (device.udpScanData !== undefined) { // UDP discovery
+        return this.appDiscoveryUdp.identifyHandler(identifyRequest);
+      } else if (device.mdnsScanData !== undefined) { // mDNS discovery
+        return this.appDiscoveryMdns.identifyHandler(identifyRequest);
+      } else if (device.udpScanData !== undefined) { // UDP discovery
+        return this.appDiscoveryUpnp.identifyHandler(identifyRequest);
+      } else {
+        throw new Error(`Missing or incorrect scan data for intent requestId ${identifyRequest.requestId}`);
       }
+    })();
+    console.log('IDENTIFY response:', identifyResponse);
+    return identifyResponse;
+  }
 
-  public reachableDevicesHandler = async(
-      reachableDevicesRequest: smarthome.IntentFlow.ReachableDevicesRequest):
-      Promise<smarthome.IntentFlow.ReachableDevicesResponse> => {
-        console.log(`REACHABLE_DEVICES request ${
-            JSON.stringify(reachableDevicesRequest, null, 2)}`);
-
-        const proxyDeviceId =
-            reachableDevicesRequest.inputs[0].payload.device.id;
-        const devices = reachableDevicesRequest.devices.flatMap((d) => {
-          const customData = d.customData as ICustomData;
-          if (customData.proxy === proxyDeviceId) {
-            return [{verificationId: `${proxyDeviceId}-${customData.channel}`}];
-          }
-          return [];
-        });
-        const reachableDevicesResponse = {
-          intent: smarthome.Intents.REACHABLE_DEVICES,
-          requestId: reachableDevicesRequest.requestId,
-          payload: {
-            devices,
-          },
-        };
-        console.log(`REACHABLE_DEVICES response ${
-            JSON.stringify(reachableDevicesResponse, null, 2)}`);
-        return reachableDevicesResponse;
+  public reachableDevicesHandler = (reachableDevicesRequest: smarthome.IntentFlow.ReachableDevicesRequest): Promise<smarthome.IntentFlow.ReachableDevicesResponse> => {
+    console.log('REACHABLE_DEVICES request:', reachableDevicesRequest);
+    const reachableDevicesResponse = (() => {
+      // Infer discovery protocol from scan data.
+      const device = reachableDevicesRequest.inputs[0].payload.device;
+      if (device.udpScanData !== undefined) { // UDP discovery
+        return this.appDiscoveryUdp.reachableDevicesHandler(reachableDevicesRequest);
+      } else if (device.mdnsScanData !== undefined) { // mDNS discovery
+        return this.appDiscoveryMdns.reachableDevicesHandler(reachableDevicesRequest);
+      } else if (device.udpScanData !== undefined) { // UDP discovery
+        return this.appDiscoveryUpnp.reachableDevicesHandler(reachableDevicesRequest);
+      } else {
+        throw new Error(`Missing or incorrect scan data for intent requestId ${reachableDevicesRequest.requestId}`);
       }
+    })();
+    console.log('REACHABLE_DEVICES response:', reachableDevicesResponse);
+    return reachableDevicesResponse;
+  }
 
-  // executeHandler send openpixelcontrol messages corresponding to light device
-  // commands.
-  public executeHandler = async(
-      executeRequest: smarthome.IntentFlow.ExecuteRequest):
-      Promise<smarthome.IntentFlow.ExecuteResponse> => {
-        console.log(
-            `EXECUTE request: ${JSON.stringify(executeRequest, null, 2)}`);
-
-        // TODO(proppy): handle multiple inputs/commands.
-        const command = executeRequest.inputs[0].payload.commands[0];
-        // TODO(proppy): handle multiple executions.
-        const execution = command.execution[0];
-        if (execution.command !== 'action.devices.commands.ColorAbsolute') {
-          throw Error(`Unsupported command: ${execution.command}`);
-        }
-        // Create execution response to capture individual command
-        // success/failure for each devices.
-        const executeResponse =
-            new smarthome.Execute.Response.Builder().setRequestId(
-                executeRequest.requestId);
-        // Handle light device commands for all devices.
-        await Promise.all(command.devices.map(async (device) => {
-          const stream = opcStream();
-          const params = execution.params as IColorAbsolute;
-          const customData = device.customData as ICustomData;
-          // Create OPC set-pixel 8-bit message from ColorAbsolute command
-          const rgb = params.color.spectrumRGB;
-          const colorBuf = Buffer.alloc(customData.leds * 3);
-          for (let i = 0; i < colorBuf.length; i += 3) {
-            colorBuf.writeUInt8(rgb >> 16 & 0xff, i + 0);  // R
-            colorBuf.writeUInt8(rgb >> 8 & 0xff, i + 1);   // G
-            colorBuf.writeUInt8(rgb >> 0 & 0xff, i + 2);   // B
-          }
-          stream.writePixels(customData.channel, colorBuf);
-          const opcMessage = stream.read();
-          console.debug('opcMessage:', opcMessage);
-
-          const deviceCommand =
-              makeSendCommand(customData.control_protocol, opcMessage);
-          deviceCommand.requestId = executeRequest.requestId;
-          deviceCommand.deviceId = device.id;
-          deviceCommand.port = customData.port;
-
-          console.debug(
-              `${customData.control_protocol} RequestData: `, deviceCommand);
-          try {
-            const result =
-                await this.app.getDeviceManager().send(deviceCommand);
-            const state = {
-              ...params,
-              online: true,
-            };
-            executeResponse.setSuccessState(result.deviceId, state);
-          } catch (e) {
-            executeResponse.setErrorState(device.id, e.errorCode);
-          }
-        }));
-        console.log(
-            `EXECUTE response: ${JSON.stringify(executeResponse, null, 2)}`);
-        // Return execution response to smarthome infrastructure.
-        return executeResponse.build();
+  public executeHandler = (executeRequest: smarthome.IntentFlow.ExecuteRequest): Promise<smarthome.IntentFlow.ExecuteResponse> => {
+    console.log('EXECUTE request:', executeRequest);
+    const executeResponse = (() => {
+      // Infer execution protocol from the first device custom data.
+      const device = executeRequest.inputs[0].payload.commands[0].devices[0];
+      const customData = device.customData as ICustomData;
+      switch (customData.control_protocol) {
+        case 'UDP':
+          return this.appExecutionUdp.executeHandler(executeRequest);
+        case 'TCP':
+          return this.appExecutionTcp.executeHandler(executeRequest);
+        case 'HTTP':
+          return this.appExecutionHttp.executeHandler(executeRequest);
+        default:
+          throw new Error(`Unsupported protocol for EXECUTE intent requestId ${executeRequest.requestId}: ${customData.control_protocol}`);
       }
-
-  private getDiscoveryData = async(
-      device: smarthome.IntentFlow.LocalIdentifiedDevice,
-      requestId: string,
-      ): Promise<IDiscoveryData> => {
-    if (device.udpScanData !== undefined) { // UDP discovery
-      return cbor.decodeFirst(Buffer.from(device.udpScanData.data, 'hex'));
-
-    } else if (device.mdnsScanData !== undefined) { // mDNS discovery
-      const scanData = device.mdnsScanData as smarthome.IntentFlow.MdnsScanData;
-      return {
-        id: scanData.txt.id,
-        model: scanData.txt.model,
-        hw_rev: scanData.txt.hw_rev,
-        fw_rev: scanData.txt.fw_rev,
-        channels: scanData.txt.channels
-          .split(',')
-          .map((channel) => parseInt(channel, 10)),
-      };
-
-    } else if (device.upnpScanData !== undefined) { // UPnP discovery
-      const scanData = device.upnpScanData as smarthome.IntentFlow.UpnpScanData;
-      // Request and parse XML device description
-      const deviceCommand = makeHttpGet(scanData.location);
-      deviceCommand.requestId = requestId;
-      deviceCommand.deviceId = '';
-      deviceCommand.port = scanData.port;
-
-      console.debug('UPnP HTTP command: ', deviceCommand);
-      try {
-        // Request the XML device description
-        const httpResponseData =
-          await this.app.getDeviceManager().send(deviceCommand) as
-          smarthome.DataFlow.HttpResponseData;
-        const xmlResponse = httpResponseData.httpResponse.body as string;
-        console.log('XML device description', xmlResponse);
-        const deviceDescription = new DOMParser()
-          .parseFromString(xmlResponse, 'text/xml');
-
-        // Parse UPnP type strings
-        const deviceElement = deviceDescription.getElementsByTagName('device')[0];
-        const deviceId = deviceElement.getElementsByTagName('UDN')[0]
-          .textContent?.match(/uuid:([a-zA-Z0-9]+)/)?.[1] || '';
-        const deviceModel = deviceElement.getElementsByTagName('modelName')[0]
-          .textContent || '';
-
-        const serviceElements = deviceElement.getElementsByTagName('service');
-        const channelList = Array.from(serviceElements).map((service) => {
-          const channel = service.getElementsByTagName('serviceId')[0]
-            .textContent?.match(/urn:sample:serviceId:strand-([0-9]+)/);
-          return channel ? parseInt(channel[1], 10) : 0;
-        });
-
-        const discoveryData: IDiscoveryData = {
-          id: deviceId,
-          model: deviceModel,
-          channels: channelList,
-        };
-        return discoveryData;
-      } catch (e) {
-        console.log('UPnP HTTP error: ', e);
-      }
-    }
-    throw Error(
-        `Missing or incorrect scan data for intent requestId ${requestId}`);
+    })();
+    console.log('EXECUTE response:', executeResponse);
+    return executeResponse;
   }
 }

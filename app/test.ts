@@ -14,12 +14,10 @@
 /// <reference types="@google/local-home-sdk" />
 
 import test from 'ava';
+import cbor from 'cbor';
 
 import {HomeApp} from './app';
 import {IColorAbsolute, IDiscoveryData} from './types';
-
-// TODO(proppy): add typings
-const cbor = require('cbor');
 
 function smarthomeDeviceManagerStub(deviceId: string, error?: any) {
   const DeviceManager = class {
@@ -195,10 +193,6 @@ test('EXECUTE handler ColorAbsolute', async (t) => {
         intent: smarthome.Intents.EXECUTE,
         payload: {
           commands: [{
-            execution: [{
-              command,
-              params,
-            }],
             devices: [{
               id: deviceId,
               customData: {
@@ -206,6 +200,10 @@ test('EXECUTE handler ColorAbsolute', async (t) => {
                 leds: 8,
                 control_protocol: 'TCP',
               },
+            }],
+            execution: [{
+              command,
+              params,
             }],
           }],
           structureData: {},
@@ -247,10 +245,6 @@ test('EXECUTE handler failure', async (t) => {
         intent: smarthome.Intents.EXECUTE,
         payload: {
           commands: [{
-            execution: [{
-              command,
-              params,
-            }],
             devices: [{
               id: deviceId,
               customData: {
@@ -258,6 +252,10 @@ test('EXECUTE handler failure', async (t) => {
                 leds: 8,
                 control_protocol: 'TCP',
               },
+            }],
+            execution: [{
+              command,
+              params,
             }],
           }],
           structureData: {},

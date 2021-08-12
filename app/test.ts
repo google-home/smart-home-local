@@ -119,7 +119,7 @@ test.before((t) => {
               states: state,
             });
           }
-          public setErrorState(deviceId: string, errorCode: string) {
+          public setErrorState(deviceId: string, errorCode: smarthome.IntentFlow.ExecuteErrors) {
             this.commands.push({
               ids: [deviceId],
               status: 'ERROR',
@@ -268,7 +268,7 @@ test('EXECUTE handler failure', async (t) => {
   t.deepEqual(executeResponse.payload.commands, [{
                 ids: [deviceId],
                 status: 'ERROR',
-                errorCode: 'some-error',
+                errorCode: 'some-error' as smarthome.IntentFlow.ExecuteErrors,
               }]);
   t.is(deviceManager.commands.length, 0);
 });

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019, Google LLC
+ * Copyright 2021, Google LLC
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,8 +11,17 @@
  * limitations under the License.
  */
 
-export interface IOPCMessage {
+import type {ControlKind, IDiscoveryData} from '../device/types';
+export {ControlKind, IDiscoveryData};
+
+export interface ICustomData {
   channel: number;
-  command: number;
-  data: Buffer;
+  leds: number;
+  port: number;
+  proxy: string;
+  control_protocol: ControlKind;
+}
+
+export interface IColorAbsolute {
+  color: {name: string; spectrumRGB: number;};
 }

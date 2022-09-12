@@ -24,3 +24,11 @@ export enum ControlKind {
   TCP = 'TCP',
   HTTP = 'HTTP',
 }
+
+export interface IDiscoveryData {
+  id: string;
+  model: string;
+  hw_rev?: string;
+  fw_rev?: string;
+  channels: number[];
+}

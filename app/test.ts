@@ -14,12 +14,10 @@
 /// <reference types="@google/local-home-sdk" />
 
 import test from 'ava';
+import cbor from 'cbor';
 
 import {HomeApp} from './app';
 import {IColorAbsolute, IDiscoveryData} from './types';
-
-// TODO(proppy): add typings
-const cbor = require('cbor');
 
 function smarthomeDeviceManagerStub(deviceId: string, error?: any) {
   const DeviceManager = class {
@@ -49,16 +47,40 @@ function smarthomeAppStub(deviceManager?: any) {
     public listen() {
       return Promise.resolve();
     }
-    public onExecute() {
+    public on(eventType: any, handler: any) {
       return this;
     }
-    public onIdentify() {
+    public onExecute(handler: any) {
       return this;
     }
-    public onQuery() {
+    public onIdentify(handler: any) {
       return this;
     }
-    public onReachableDevices() {
+    public onIndicate(handler: any) {
+      return this;
+    }
+    public onParseNotification(handler: any) {
+      return this;
+    }
+    public onProvision(handler: any) {
+      return this;
+    }
+    public onProxySelected(handler: any) {
+      return this;
+    }
+    public onQuery(handler: any) {
+      return this;
+    }
+    public onReachableDevices(handler: any) {
+      return this;
+    }
+    public onRegister(handler: any) {
+      return this;
+    }
+    public onUnprovision(handler: any) {
+      return this;
+    }
+    public onUpdate(handler: any) {
       return this;
     }
   };
@@ -95,7 +117,7 @@ test.before((t) => {
               states: state,
             });
           }
-          public setErrorState(deviceId: string, errorCode: string) {
+          public setErrorState(deviceId: string, errorCode: smarthome.IntentFlow.ExecuteErrors) {
             this.commands.push({
               ids: [deviceId],
               status: 'ERROR',
@@ -147,7 +169,7 @@ test('IDENTIFY handler', async (t) => {
     ],
     devices: [],
   });
-  t.is(identifyResponse.payload.device.verificationId, deviceData.id);
+  t.is((identifyResponse.payload.device as {verificationId: string}).verificationId, deviceData.id);
 });
 
 // TODO(proppy): add REACHEABLE_DEVICES hub test
@@ -171,10 +193,6 @@ test('EXECUTE handler ColorAbsolute', async (t) => {
         intent: smarthome.Intents.EXECUTE,
         payload: {
           commands: [{
-            execution: [{
-              command,
-              params,
-            }],
             devices: [{
               id: deviceId,
               customData: {
@@ -182,6 +200,10 @@ test('EXECUTE handler ColorAbsolute', async (t) => {
                 leds: 8,
                 control_protocol: 'TCP',
               },
+            }],
+            execution: [{
+              command,
+              params,
             }],
           }],
           structureData: {},
@@ -223,10 +245,6 @@ test('EXECUTE handler failure', async (t) => {
         intent: smarthome.Intents.EXECUTE,
         payload: {
           commands: [{
-            execution: [{
-              command,
-              params,
-            }],
             devices: [{
               id: deviceId,
               customData: {
@@ -234,6 +252,10 @@ test('EXECUTE handler failure', async (t) => {
                 leds: 8,
                 control_protocol: 'TCP',
               },
+            }],
+            execution: [{
+              command,
+              params,
             }],
           }],
           structureData: {},
@@ -244,7 +266,7 @@ test('EXECUTE handler failure', async (t) => {
   t.deepEqual(executeResponse.payload.commands, [{
                 ids: [deviceId],
                 status: 'ERROR',
-                errorCode: 'some-error',
+                errorCode: 'some-error' as smarthome.IntentFlow.ExecuteErrors,
               }]);
   t.is(deviceManager.commands.length, 0);
 });

@@ -1,20 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
+    "target": "es2018",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
-    "outDir": "dist" /* Redirect output structure to the directory. */,
-    "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
-    "paths": {
-      "~/*": ["./*"],
-      "*": ["./node_modules/*", "./*"]
-    },
-    "typeRoots": [
-      "node_modules/@types"
-    ] /* List of folders to include type definitions from. */,
     "types": [
       "node"
-    ] /* Type declaration files to be included in compilation. */,
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
-  }
+    ],
+    "esModuleInterop": true
+  },
+  "files" : [
+    "discovery_mdns.ts",
+    "discovery_udp.ts",
+    "discovery_upnp.ts",
+    "execution_http.ts",
+    "execution_tcp.ts",
+    "execution_udp.ts",
+    "opc_device.ts",
+    "server.ts",
+    "types.ts"
+  ]
 }

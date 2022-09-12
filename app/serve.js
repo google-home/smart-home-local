@@ -40,9 +40,6 @@ webpack_node.hooks.done.tap('webpack.serve.js', () => {
   console.log(`[local-home-app] Node ondevice testing URL:   http://${addr}:${port}/node/bundle.js`);
 });
 
-app.get('/web/index.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
 app.use('/web', middleware(webpack_web))
    .use('/node', middleware(webpack_node))
    .listen(port);

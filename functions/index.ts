@@ -65,8 +65,7 @@ app.onSync((body, headers) => {
                              },
                              willReportState: false,
                              attributes: {
-                               colorModel: 'rgb',
-                               commandOnlyColorSetting: true,
+                               colorModel: 'rgb'
                              },
                              customData: {
                                channel: device.channel,
@@ -81,15 +80,14 @@ app.onSync((body, headers) => {
 });
 app.onQuery((body, headers) => {
   functions.logger.log('Cloud Fulfillment received QUERY');
-  // Command-only devices do not support state queries
+  // Always show the devices as online.
   return {
     requestId: body.requestId,
     payload: {
       devices: devices.reduce((result, device) => {
         result[device.id] = {
-          status: 'ERROR',
-          errorCode: 'notSupported',
-          debugString: `${device.id} is command only`,
+          status: 'SUCCESS',
+          online: true
         };
         return result;
       }, {}),

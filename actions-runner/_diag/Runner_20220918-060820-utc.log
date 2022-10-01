@@ -1,0 +1,467 @@
+[2022-09-18 06:08:21Z INFO HostContext] No proxy settings were found based on environmental variables (http_proxy/https_proxy/HTTP_PROXY/HTTPS_PROXY)
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'Credentials': 'C:\Projects\smart-home-local\actions-runner\.credentials'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'Runner': 'C:\Projects\smart-home-local\actions-runner\.runner'
+[2022-09-18 06:08:21Z INFO Listener] Runner is built for Windows (X64) - win-x64.
+[2022-09-18 06:08:21Z INFO Listener] RuntimeInformation: Microsoft Windows 10.0.25201.
+[2022-09-18 06:08:21Z INFO Listener] Version: 2.296.2
+[2022-09-18 06:08:21Z INFO Listener] Commit: 21c30edf1e7a80e041649848ea1d91b885a8762e
+[2022-09-18 06:08:21Z INFO Listener] Culture: en-US
+[2022-09-18 06:08:21Z INFO Listener] UI Culture: en-US
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO Listener] Validating directory permissions for: 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO CommandLineParser] Parse
+[2022-09-18 06:08:21Z INFO CommandLineParser] Parsing 1 args
+[2022-09-18 06:08:21Z INFO CommandLineParser] parsing argument
+[2022-09-18 06:08:21Z INFO CommandLineParser] HasArgs: False
+[2022-09-18 06:08:21Z INFO CommandLineParser] Adding Command: run
+[2022-09-18 06:08:21Z INFO Listener] Arguments parsed
+[2022-09-18 06:08:21Z INFO Runner] ExecuteCommand
+[2022-09-18 06:08:21Z INFO ConfigurationStore] currentAssemblyLocation: C:\Projects\smart-home-local\actions-runner\bin\Runner.Listener.dll
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] binPath: C:\Projects\smart-home-local\actions-runner\bin
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] RootFolder: C:\Projects\smart-home-local\actions-runner
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'Runner': 'C:\Projects\smart-home-local\actions-runner\.runner'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] ConfigFilePath: C:\Projects\smart-home-local\actions-runner\.runner
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'Credentials': 'C:\Projects\smart-home-local\actions-runner\.credentials'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] CredFilePath: C:\Projects\smart-home-local\actions-runner\.credentials
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'MigratedCredentials': 'C:\Projects\smart-home-local\actions-runner\.credentials_migrated'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] MigratedCredFilePath: C:\Projects\smart-home-local\actions-runner\.credentials_migrated
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'Service': 'C:\Projects\smart-home-local\actions-runner\.service'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] ServiceConfigFilePath: C:\Projects\smart-home-local\actions-runner\.service
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'help': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'version': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'commit': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'check': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Command 'configure': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Command 'remove': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Command 'warmup': 'False'
+[2022-09-18 06:08:21Z INFO ConfigurationManager] LoadSettings
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured()
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured: True
+[2022-09-18 06:08:21Z INFO ConfigurationManager] Is configured: True
+[2022-09-18 06:08:21Z INFO ConfigurationStore] Read setting file: 304 chars
+[2022-09-18 06:08:21Z INFO ConfigurationManager] Settings Loaded
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsServiceConfigured()
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsServiceConfigured: False
+[2022-09-18 06:08:21Z INFO CommandSettings] Command 'run': 'True'
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured()
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured: True
+[2022-09-18 06:08:21Z INFO ConfigurationManager] Is configured: True
+[2022-09-18 06:08:21Z INFO Runner] Could not parse the argument value '' for StartupType. Defaulting to Manual
+[2022-09-18 06:08:21Z INFO Runner] Set runner startup type - Manual
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'once': 'False'
+[2022-09-18 06:08:21Z INFO CommandSettings] Flag 'once': 'False'
+[2022-09-18 06:08:21Z INFO Runner] RunAsync
+[2022-09-18 06:08:21Z INFO ConfigurationManager] LoadSettings
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured()
+[2022-09-18 06:08:21Z INFO ConfigurationStore] IsConfigured: True
+[2022-09-18 06:08:21Z INFO ConfigurationManager] Is configured: True
+[2022-09-18 06:08:21Z INFO ConfigurationManager] Settings Loaded
+[2022-09-18 06:08:21Z INFO MessageListener] {
+  "AgentId": 21,
+  "AgentName": "REBELS-TAVERN",
+  "PoolId": 1,
+  "PoolName": "Default",
+  "ServerUrl": "https://pipelines.actions.githubusercontent.com/cyNCjTECmkD8hmkRgQ071WMpc6JaYBwo95vQwT3teetPK6GaKz",
+  "GitHubUrl": "https://github.com/RebelTat/smart-home-local",
+  "WorkFolder": "_work"
+}
+[2022-09-18 06:08:21Z INFO MessageListener] Loading Credentials
+[2022-09-18 06:08:21Z INFO ConfigurationStore] HasCredentials()
+[2022-09-18 06:08:21Z INFO ConfigurationStore] stored True
+[2022-09-18 06:08:21Z INFO CredentialManager] GetCredentialProvider
+[2022-09-18 06:08:21Z INFO CredentialManager] Creating type OAuth
+[2022-09-18 06:08:21Z INFO CredentialManager] Creating credential type: OAuth
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Bin': 'C:\Projects\smart-home-local\actions-runner\bin'
+[2022-09-18 06:08:21Z INFO HostContext] Well known directory 'Root': 'C:\Projects\smart-home-local\actions-runner'
+[2022-09-18 06:08:21Z INFO HostContext] Well known config file 'RSACredentials': 'C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams'
+[2022-09-18 06:08:21Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 06:08:21Z INFO MessageListener] Attempt to create session.
+[2022-09-18 06:08:21Z INFO MessageListener] Connecting to the Runner Server...
+[2022-09-18 06:08:21Z INFO RunnerServer] Establish connection with 100 seconds timeout.
+[2022-09-18 06:08:21Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2022-09-18 06:08:21Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2022-09-18 06:08:21Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2022-09-18 06:08:21Z INFO RunnerServer] Establish connection with 60 seconds timeout.
+[2022-09-18 06:08:21Z INFO GitHubActionsService] Starting operation Location.GetConnectionData
+[2022-09-18 06:08:22Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2022-09-18 06:08:22Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2022-09-18 06:08:22Z INFO GitHubActionsService] Finished operation Location.GetConnectionData
+[2022-09-18 06:08:22Z INFO MessageListener] VssConnection created
+[2022-09-18 06:08:22Z INFO Terminal] WRITE LINE: 
+[2022-09-18 06:08:22Z INFO Terminal] WRITE LINE: 
+[2022-09-18 06:08:22Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 06:08:22Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 06:08:22Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 06:08:22Z INFO MessageListener] Session created.
+[2022-09-18 06:08:22Z INFO Terminal] WRITE LINE: Current runner version: '2.296.2'
+[2022-09-18 06:08:22Z INFO Terminal] WRITE LINE: 2022-09-18 06:08:22Z: Listening for Jobs
+[2022-09-18 06:08:22Z INFO JobDispatcher] Set runner/worker IPC timeout to 30 seconds.
+[2022-09-18 06:38:27Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 07:03:31Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 07:03:32Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 07:08:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 07:38:37Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 07:58:41Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 07:58:41Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 08:08:43Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 08:38:47Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 08:53:49Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 08:53:50Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 09:08:52Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 09:38:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 09:49:00Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 09:49:00Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 10:09:03Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 10:39:09Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 10:44:09Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 10:44:10Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 11:09:14Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 11:39:19Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 11:39:19Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 11:39:20Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 12:09:24Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 12:34:28Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 12:34:28Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 12:39:29Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 13:09:35Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 13:29:38Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 13:29:39Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 13:39:40Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 14:09:45Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 14:24:48Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 14:24:48Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 14:39:51Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 15:09:56Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 15:19:58Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 15:19:59Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 15:40:02Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 16:10:07Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 16:15:08Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 16:15:08Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 16:40:12Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 17:10:16Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 17:10:16Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 17:10:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 17:40:21Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 18:05:24Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 18:05:25Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 18:10:25Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 18:40:30Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 19:00:33Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 19:00:33Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 19:10:35Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 19:40:40Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 19:55:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 19:55:42Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 20:10:44Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 20:40:49Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 20:50:50Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 20:50:51Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 21:10:54Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 21:40:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 21:45:59Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 21:45:59Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 22:11:03Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 22:41:07Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 22:41:07Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 22:41:08Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 23:11:12Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-18 23:36:16Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-18 23:36:16Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-18 23:41:17Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 00:11:22Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 00:31:25Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 00:31:25Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 00:41:26Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 01:11:31Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 01:26:33Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 01:26:33Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 01:41:36Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 02:11:40Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 02:21:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 02:21:42Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 02:41:45Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 03:11:49Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 03:16:50Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 03:16:50Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 03:41:54Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 04:11:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 04:11:58Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 04:11:59Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 04:42:03Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 05:07:08Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 05:07:08Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 05:12:09Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 05:42:13Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 06:02:17Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 06:02:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 06:12:19Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 06:42:23Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 06:57:26Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 06:57:26Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 07:12:28Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 07:42:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 07:52:34Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 07:52:35Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 08:12:37Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 08:42:42Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 08:47:43Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 08:47:43Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 09:12:47Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 09:42:51Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 09:42:51Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 09:42:52Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 10:12:56Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 10:38:01Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 10:38:01Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 10:43:02Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 11:13:06Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 11:33:10Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 11:33:10Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 11:43:11Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 12:13:14Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 12:28:16Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 12:28:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 12:43:19Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 13:13:23Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 13:23:25Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 13:23:25Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 13:43:28Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 14:13:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 14:18:34Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 14:18:34Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 14:43:38Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 15:13:42Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 15:13:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 15:13:42Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 15:43:47Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 16:08:52Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 16:08:52Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 16:13:53Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 16:43:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 17:04:01Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 17:04:02Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 17:14:04Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 17:44:09Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 17:59:11Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 17:59:11Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 18:14:14Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 18:44:19Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 18:54:22Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 18:54:22Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 19:14:25Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 19:44:31Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 19:49:32Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 19:49:32Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 20:14:36Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 20:44:42Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 20:44:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 20:44:42Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 21:14:47Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 21:39:52Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 21:39:52Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 21:44:53Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 22:14:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 22:35:02Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 22:35:02Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 22:45:04Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 23:15:10Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-19 23:30:13Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-19 23:30:13Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-19 23:45:16Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 00:15:22Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 00:25:24Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 00:25:24Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 00:45:27Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 01:15:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 01:20:34Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 01:20:35Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 01:45:39Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 02:15:44Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 02:15:44Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 02:15:44Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 02:45:50Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 03:10:54Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 03:10:54Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 03:15:55Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 03:46:00Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 04:06:04Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 04:06:04Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 04:16:06Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 04:46:11Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 05:01:14Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 05:01:14Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 05:16:17Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 05:46:21Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 05:56:23Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 05:56:23Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 06:16:27Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 06:46:32Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 06:51:33Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 06:51:33Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 07:16:37Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 07:46:42Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 07:46:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 07:46:43Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 08:16:48Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 08:41:52Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 08:41:52Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 08:46:53Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 09:16:58Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 09:37:02Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 09:37:02Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 09:47:04Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 10:17:09Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 10:32:12Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 10:32:12Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 10:47:14Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 11:17:20Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 11:27:22Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 11:27:22Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 11:47:25Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 12:17:28Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 12:22:29Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 12:22:29Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 12:47:34Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 13:17:39Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 13:17:39Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 13:17:39Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 13:47:45Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 14:12:50Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 14:12:50Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 14:17:51Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 14:47:56Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 15:08:00Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 15:08:00Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 15:18:02Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 15:48:07Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 16:03:09Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 16:03:10Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 16:18:12Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 16:48:17Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 16:58:18Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 16:58:18Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 17:18:21Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 17:48:25Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 17:53:25Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 17:53:26Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 18:18:29Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 18:48:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 18:48:33Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 18:48:33Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 19:18:37Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 19:43:40Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 19:43:40Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 19:48:41Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 20:18:44Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 20:38:47Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 20:38:47Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 20:48:49Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 21:18:52Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 21:33:54Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 21:33:55Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 21:48:57Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 22:19:00Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 22:29:02Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 22:29:02Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 22:49:05Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 23:19:08Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-20 23:24:09Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-20 23:24:09Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-20 23:49:13Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 00:19:16Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 00:19:17Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 00:19:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 00:49:21Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 01:14:24Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 01:14:24Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 01:19:25Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 01:49:29Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 02:09:31Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 02:09:32Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 02:19:33Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 02:49:37Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 03:04:39Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 03:04:39Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 03:19:41Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 03:49:45Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 03:59:46Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 03:59:46Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 04:19:49Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 04:49:53Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 04:54:54Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 04:54:54Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 05:19:57Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 05:50:01Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 05:50:01Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 05:50:01Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 06:20:05Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 06:45:08Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 06:45:09Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 06:50:09Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 07:20:13Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 07:40:17Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 07:40:17Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 07:50:18Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 08:20:22Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 08:35:24Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 08:35:25Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 08:50:26Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 09:20:30Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 09:30:31Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 09:30:32Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 09:50:34Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 10:20:38Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 10:25:38Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 10:25:39Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 10:50:42Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 11:20:45Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 11:20:45Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 11:20:46Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 11:50:49Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 12:15:51Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 12:15:51Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 12:20:52Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 12:50:55Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 13:10:58Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 13:10:58Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 13:20:59Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 13:51:03Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 14:06:05Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 14:06:05Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 14:21:07Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 14:51:11Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 15:01:12Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 15:01:13Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 15:21:15Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 15:51:19Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 15:56:20Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 15:56:20Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 16:21:23Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 16:51:27Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 16:51:27Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 16:51:28Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 17:21:31Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 17:46:35Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 17:46:35Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 17:51:36Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 18:21:40Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.
+[2022-09-21 18:41:42Z INFO RSAEncryptedFileKeyManager] Loading RSA key parameters from file C:\Projects\smart-home-local\actions-runner\.credentials_rsaparams
+[2022-09-21 18:41:43Z INFO GitHubActionsService] AAD Correlation ID for this token request: Unknown
+[2022-09-21 18:51:44Z INFO MessageListener] No message retrieved from session 'eece92ce-61fa-4806-a88a-ba8e61f4625e' within last 30 minutes.

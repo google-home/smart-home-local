@@ -17,9 +17,9 @@
     "firebase": "firebase"
   },
   "dependencies": {
-    "actions-on-google": "^2.12.0",
-    "firebase-admin": "^8.12.1",
-    "firebase-functions": "^3.6.2",
+    "actions-on-google": "^3.0.0",
+    "firebase-admin": "^10.0.2",
+    "firebase-functions": "^3.8.0",
     "ts-polyfill": "^3.8.2"
   },
   "devDependencies": {

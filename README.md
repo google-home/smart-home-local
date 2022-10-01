@@ -54,9 +54,9 @@ _Develop > Actions > Configure local home SDK_ under **Device Scan Configuration
 
 #### UDP
 - **Broadcast address**: `255.255.255.255`
-- **Broadcast port**: `3312`
-- **Listen port**: `3311`
 - **Discovery packet**: `A5A5A5A5`
+- **Listen port**: `3312`
+- **Broadcast port**: `3311`
 
 #### mDNS
 - **mDNS service name**: `_sample._tcp.local`

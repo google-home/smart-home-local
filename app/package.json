@@ -18,7 +18,7 @@
         "array.prototype.flat": "^1.2.3",
         "ava": "^3.4.0",
         "c8": "^7.1.2",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "firebase-tools": "^8.4.2",
         "html-webpack-plugin": "^3.2.0",
         "ts-loader": "^7.0.5",

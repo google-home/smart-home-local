@@ -1,0 +1,24 @@
+{
+    "id": "ubuntu",
+    "version": "1.0.5",
+    "name": "Ubuntu",
+    "description": "A simple Ubuntu container with Git and other common utilities installed.",
+    "documentationURL": "https://github.com/devcontainers/templates/tree/main/src/ubuntu",
+    "publisher": "Dev Container Spec Maintainers",
+    "licenseURL": "https://github.com/devcontainers/templates/blob/main/LICENSE",
+    "options": {
+        "imageVariant": {
+            "type": "string",
+            "description": "Ubuntu version (use ubuntu-22.04 or ubuntu-18.04 on local arm64/Apple Silicon):",
+            "proposals": [
+                "jammy",
+                "focal",
+                "bionic"
+            ],
+            "default": "jammy"
+        }
+    },
+    "platforms": [
+        "Any"
+    ]
+}

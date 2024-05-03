@@ -23,7 +23,7 @@
     "ts-polyfill": "^3.8.2"
   },
   "devDependencies": {
-    "firebase-tools": "^8.4.2",
+    "firebase-tools": "^13.6.0",
     "tslint": "^6.1.2",
     "typescript": "^3.9.5"
   }

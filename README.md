@@ -1,6 +1,6 @@
 # Local Home SDK Sample
 
-This sample demonstrates integrating a smart home Action with the
+This sample demonstrates integrating a Cloud-to-cloud integration with the
 [Local Home SDK](https://developers.google.com/assistant/smarthome/concepts/local).
 The Local Home SDK allow developers to add a local path to handle smart home
 intents by running TypeScript (or JavaScript) directly on Google Home smart speakers
@@ -15,7 +15,7 @@ The sample supports the following protocols along with the companion
 - [Node.js](https://nodejs.org/) LTS 10.16.0+
 - [Firebase CLI](https://firebase.google.com/docs/cli)
 
-## Configure the Actions project
+## Configure the integration project
 
 > Note: This project uses
 > [Cloud Functions for Firebase](https://firebase.google.com/docs/functions),
@@ -24,7 +24,7 @@ The sample supports the following protocols along with the companion
 > [Create a new billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account#create_a_new_billing_account)
 > for more information.
 
-- Create a new _Smart Home_ project in the [Actions console](https://console.actions.google.com/)
+- Create a new _Smart Home_ project in the [Google Home Developer Console](https://console.home.google.com/)
 - Deploy the placeholder smart home provider to _Cloud Functions for Firebase_
   using the same Project ID:
   ```
@@ -45,7 +45,7 @@ The sample supports the following protocols along with the companion
 ### Select a discovery protocol
 
 Choose one of the supported the discovery protocols that you would like to test,
-and create a new scan configuration in the Actions console.
+and create a new scan configuration in the Developer console.
 
 > Note: These are the default values used by the [virtual device](device/README.md)
 > for discovery. If you choose to use different values, you will need to supply
@@ -175,7 +175,7 @@ or deploy it to a publicly reacheable URL endpoint.
   > Note: The local development server needs to listen on the same local network as
   > the Home device in order to be able to load the Local Home SDK application.
 
-- Go to the smart home project in the [Actions console](https://console.actions.google.com/)
+- Go to the smart home project in the [Developer Console](https://console.home.google.com/)
 - In _Develop > Actions > Configure local home SDK_
   - Set the *testing URL for Chrome* to the one displayed in the local development server logs.
   - Set the *testing URL for Node* to the one displayed in the local development server logs.
@@ -191,7 +191,7 @@ npm run build --prefix app/
 npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 ```
 
-- Go to the smart home project in the [Actions console](https://console.actions.google.com/)
+- Go to the smart home project in the [Developer Console](https://console.home.google.com/)
 - In _Develop > Actions > Configure local home SDK_
   - Set the *testing URL for Chrome* to: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/web/index.html`
   - Set the *testing URL for Node* to: `http://${FIREBASE_PROJECT_ID}.firebaseapp.com/node/bundle.js`
@@ -201,12 +201,12 @@ npm run deploy --prefix app/ -- --project ${FIREBASE_PROJECT_ID}
 
 ## Test the local execution app
 
-- In _Develop > Invocation_, set the *Display name* for the smart home Action.
+- In _Develop > Invocation_, set the *Display name* for the Cloud-to-cloud integration.
 - In _Test_, click *Start testing*
 - In the _Google Home app_
   - Click the '+' sign
   - Select *Work with Google*
-  - In the list of providers, select your smart home Action by *Display name* prefixed with `[test]`
+  - In the list of providers, select your Cloud-to-cloud integration by *Display name* prefixed with `[test]`
   - Click *Link*
   - Click *Complete Account Link*
 - Select the linked devices and click on *Add to a room*.

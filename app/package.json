@@ -16,7 +16,7 @@
         "@types/cbor": "^5.0.0",
         "@types/xmldom": "^0.1.29",
         "array.prototype.flat": "^1.2.3",
-        "ava": "^3.4.0",
+        "ava": "^5.2.0",
         "c8": "^7.1.2",
         "express": "^4.17.1",
         "firebase-tools": "^8.4.2",
